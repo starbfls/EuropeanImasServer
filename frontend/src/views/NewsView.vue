@@ -57,10 +57,10 @@ const news = ref([])
 const loading = ref(true)
 
 const FALLBACK = [
-  { id: 1, title: 'European iMas Offline Meetup — Berlin 2025', date: '2025-06-15', category: 'Meetup', summary: 'Join us for our first Berlin offline meetup!', cover_image: 'https://placehold.co/800x400/60aac4/ffffff?text=Berlin+Meetup+2025' },
-  { id: 2, title: 'Live Viewing: 15th Anniversary Concert', date: '2025-05-20', category: 'Live Viewing', summary: 'Celebrate 15 years of iDOLM@STER with us!', cover_image: 'https://placehold.co/800x400/c460aa/ffffff?text=15th+Anniversary+Live' },
-  { id: 3, title: 'Welcome to New Members — Spring 2025', date: '2025-04-10', category: 'Announcement', summary: 'Welcome to all our new members!', cover_image: 'https://placehold.co/800x400/aac460/ffffff?text=Welcome+New+Members' },
-  { id: 4, title: 'Fan Art Showcase — March Collection', date: '2025-03-25', category: 'Fan Content', summary: 'Over 30 pieces from European producers!', cover_image: 'https://placehold.co/800x400/aa60c4/ffffff?text=Fan+Art+March' },
+  { id: 1, title: 'European iMas Offline Meetup — Dusseldorf 2026', date: '2026-06-15', category: 'Meetup', summary: 'Join us for our first Dusseldorf offline meetup!', cover_image: 'https://placehold.co/800x400/60aac4/ffffff?text=Dusseldorf+Meetup+2026' },
+  { id: 2, title: 'Live Viewing: 15th Anniversary Concert', date: '2026-05-20', category: 'Live Viewing', summary: 'Celebrate 15 years of iDOLM@STER with us!', cover_image: 'https://placehold.co/800x400/c460aa/ffffff?text=15th+Anniversary+Live' },
+  { id: 3, title: 'Welcome to New Members — Spring 2026', date: '2026-04-10', category: 'Announcement', summary: 'Welcome to all our new members!', cover_image: 'https://placehold.co/800x400/aac460/ffffff?text=Welcome+New+Members' },
+  { id: 4, title: 'Fan Art Showcase — March Collection', date: '2026-03-25', category: 'Fan Content', summary: 'Over 30 pieces from European producers!', cover_image: 'https://placehold.co/800x400/aa60c4/ffffff?text=Fan+Art+March' },
 ]
 
 onMounted(async () => {

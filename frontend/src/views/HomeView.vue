@@ -102,9 +102,9 @@ const latestNews = ref([])
 const loading = ref(true)
 
 const stats = [
-  { value: '200+', label: 'European Producers' },
-  { value: '12', label: 'Countries Represented' },
-  { value: '30+', label: 'Events Held' },
+  { value: '40+', label: 'European Producers' },
+  { value: '8', label: 'Countries Represented' },
+  { value: '~', label: 'Events Held' },
 ]
 
 const branches = [
@@ -113,12 +113,13 @@ const branches = [
   { name: 'Million Live', color: 'border-purple-400 text-purple-600 bg-purple-50' },
   { name: 'SideM', color: 'border-blue-400 text-blue-600 bg-blue-50' },
   { name: 'Shiny Colors', color: 'border-sky-400 text-sky-600 bg-sky-50' },
+  { name: 'Gakuen Idolm@ster', color: 'border-orange-400 text-orange-600 bg-orange-50' },
 ]
 
 const FALLBACK_NEWS = [
-  { id: 1, title: 'European iMas Offline Meetup — Berlin 2025', date: '2025-06-15', category: 'Meetup', summary: 'Join us for our first Berlin offline meetup!', cover_image: 'https://placehold.co/800x400/60aac4/ffffff?text=Berlin+Meetup+2025' },
-  { id: 2, title: 'Live Viewing: 15th Anniversary Concert', date: '2025-05-20', category: 'Live Viewing', summary: 'Celebrate 15 years of iDOLM@STER with us!', cover_image: 'https://placehold.co/800x400/c460aa/ffffff?text=15th+Anniversary+Live' },
-  { id: 3, title: 'Welcome to New Members — Spring 2025', date: '2025-04-10', category: 'Announcement', summary: 'Welcome to all our new members who joined this spring!', cover_image: 'https://placehold.co/800x400/aac460/ffffff?text=Welcome+New+Members' },
+  { id: 1, title: 'European iMas Offline Meetup — Dusseldorf 2026', date: '2026-06-15', category: 'Meetup', summary: 'Join us for our first Dusseldorf offline meetup!', cover_image: 'https://placehold.co/800x400/60aac4/ffffff?text=Dusseldorf+Meetup+2026' },
+  { id: 2, title: 'Live Viewing: 15th Anniversary Concert', date: '2026-05-20', category: 'Live Viewing', summary: 'Celebrate 15 years of iDOLM@STER with us!', cover_image: 'https://placehold.co/800x400/c460aa/ffffff?text=15th+Anniversary+Live' },
+  { id: 3, title: 'Welcome to New Members — Spring 2026', date: '2026-04-10', category: 'Announcement', summary: 'Welcome to all our new members who joined this spring!', cover_image: 'https://placehold.co/800x400/aac460/ffffff?text=Welcome+New+Members' },
 ]
 
 onMounted(async () => {
