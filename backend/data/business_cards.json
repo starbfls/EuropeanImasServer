@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "front": "https://placehold.co/350x200/1a2035/e8c547?text=名刺+正面+DE制P",
+    "back": "https://placehold.co/350x200/0d1423/60aac4?text=名刺+背面+DE制P",
+    "owner": "德国制P / 慕尼黑",
+    "oshi": "宫本芙蕾德莉卡",
+    "approved": true
+  },
+  {
+    "id": 2,
+    "front": "https://placehold.co/350x200/2a1030/e8c547?text=名刺+正面+FR制P",
+    "back": "https://placehold.co/350x200/1a0820/c460aa?text=名刺+背面+FR制P",
+    "owner": "法国制P / 巴黎",
+    "oshi": "艾米丽·斯图亚特",
+    "approved": true
+  },
+  {
+    "id": 3,
+    "front": "https://placehold.co/350x200/101a30/e8c547?text=名刺+正面+NL制P",
+    "back": "https://placehold.co/350x200/081018/aa60c4?text=名刺+背面+NL制P",
+    "owner": "荷兰制P / 阿姆斯特丹",
+    "oshi": "诗花",
+    "approved": true
+  },
+  {
+    "id": 4,
+    "front": "https://placehold.co/350x200/0d2015/e8c547?text=名刺+正面+UK制P",
+    "back": "https://placehold.co/350x200/081510/60c4aa?text=名刺+背面+UK制P",
+    "owner": "英国制P / 伦敦",
+    "oshi": "葛城莉莉娅",
+    "approved": true
+  },
+  {
+    "id": 5,
+    "front": "https://placehold.co/350x200/1a1510/e8c547?text=名刺+正面+ES制P",
+    "back": "https://placehold.co/350x200/100e08/c4aa60?text=名刺+背面+ES制P",
+    "owner": "西班牙制P / 马德里",
+    "oshi": "艾米丽·斯图亚特",
+    "approved": true
+  },
+  {
+    "id": 6,
+    "front": "https://placehold.co/350x200/1a0a20/e8c547?text=名刺+正面+IT制P",
+    "back": "https://placehold.co/350x200/120718/c460aa?text=名刺+背面+IT制P",
+    "owner": "意大利制P / 米兰",
+    "oshi": "宫本芙蕾德莉卡",
+    "approved": true
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "title": "AnimagiC 2026 - 曼海姆",
+    "date_event": "2026-08-28",
+    "date_posted": "2026-07-10",
+    "category": "动漫展会",
+    "location": "曼海姆，德国",
+    "summary": "德国知名动漫展 AnimagiC 将于8月在曼海姆举办！今年预计将有多位知名声优出席，并设有 iDOLM@STER 周边专区。",
+    "content": "# AnimagiC 2026 — 曼海姆\n\n## 活动概要\n\n- **日期**：2026年8月28日 — 30日\n- **地点**：Rosengarten, 曼海姆，德国\n- **票务**：官网现已开放购票\n\n## 亮点内容\n\n- iDOLM@STER 官方周边授权贩卖区\n- 日本声优见面会（嘉宾名单公布中）\n- 同人贩卖区 Dojin Market\n- Cosplay 比赛\n\n## 欧洲制作人联盟聚会\n\n本届展会期间，联盟将组织一次非正式聚会，详情请关注 Discord 公告频道。\n\n[官网购票](https://www.animagic.de)",
+    "cover_image": "https://placehold.co/800x400/1a2035/e8c547?text=AnimagiC+2026",
+    "tags": ["展会", "德国", "曼海姆", "动漫"],
+    "external_link": "https://www.animagic.de",
+    "status": "upcoming"
+  },
+  {
+    "id": 2,
+    "title": "Japan Expo 2026 - 巴黎",
+    "date_event": "2026-07-02",
+    "date_posted": "2026-06-01",
+    "category": "动漫展会",
+    "location": "巴黎，法国",
+    "summary": "欧洲最大的日本文化展会 Japan Expo 在巴黎北维勒潘特展览中心盛大开幕，每年吸引超过25万名参观者。",
+    "content": "# Japan Expo 2026 — 巴黎\n\n## 活动概要\n\n- **日期**：2026年7月2日 — 5日\n- **地点**：巴黎北维勒潘特展览中心，法国\n- **规模**：欧洲最大日本文化展\n\n## 主要看点\n\n- 日本流行音乐现场表演\n- 声优签名会\n- 游戏与动漫新作发表\n- 传统日本文化体验区\n\n## 联盟计划\n\n联盟成员将统一在指定时间、指定地点集合拍照留念。详情另行通知。",
+    "cover_image": "https://placehold.co/800x400/1a3520/e8c547?text=Japan+Expo+2026",
+    "tags": ["展会", "法国", "巴黎"],
+    "external_link": "#",
+    "status": "upcoming"
+  },
+  {
+    "id": 3,
+    "title": "Lantis 声优见面会 - 阿姆斯特丹",
+    "date_event": "2026-09-15",
+    "date_posted": "2026-07-22",
+    "category": "声优活动",
+    "location": "阿姆斯特丹，荷兰",
+    "summary": "Lantis 旗下声优将赴荷兰进行欧洲专场见面会，多位与 iDOLM@STER 相关的声优确认出席。",
+    "content": "# Lantis 声优见面会 — 阿姆斯特丹\n\n## 确认出席嘉宾\n\n（嘉宾名单以主办方官方公告为准）\n\n## 活动内容\n\n- 声优问答环节\n- 现场演唱\n- 握手/签名会（需提前预约）\n\n## 注意事项\n\n- 活动全程以日语进行，现场设有英语翻译\n- 请携带有效证件入场",
+    "cover_image": "https://placehold.co/800x400/20203a/e8c547?text=Lantis+Europe",
+    "tags": ["声优", "荷兰", "阿姆斯特丹", "演出"],
+    "external_link": "#",
+    "status": "upcoming"
+  },
+  {
+    "id": 4,
+    "title": "Hyper Japan 2026 - 伦敦",
+    "date_event": "2026-10-23",
+    "date_posted": "2026-08-01",
+    "category": "日本文化节",
+    "location": "伦敦，英国",
+    "summary": "英国最大的日本文化节 Hyper Japan 再度回归！Olympia London 将再次成为日本流行文化的欧洲舞台。",
+    "content": "# Hyper Japan 2026 — 伦敦\n\n## 基本信息\n\n- **日期**：2026年10月23日 — 25日\n- **地点**：Olympia London，英国\n\n## 活动亮点\n\n- J-Music 现场表演\n- 街舞/宅舞比赛\n- 日本食品与文化体验\n- 同人贩卖区",
+    "cover_image": "https://placehold.co/800x400/1a1030/e8c547?text=Hyper+Japan+2026",
+    "tags": ["展会", "英国", "伦敦"],
+    "external_link": "#",
+    "status": "upcoming"
+  },
+  {
+    "id": 5,
+    "title": "制作人联盟线下聚会 - 杜塞尔多夫",
+    "date_event": "2026-09-05",
+    "date_posted": "2026-07-30",
+    "category": "制作人聚会",
+    "location": "杜塞尔多夫，德国",
+    "summary": "欧洲偶像大师制作人联盟 2026 年秋季线下聚会！同好们齐聚一堂，交流周边、观看演出、共度美好时光。",
+    "content": "# 制作人联盟线下聚会 — 杜塞尔多夫 2026\n\n## 活动详情\n\n- **日期**：2026年9月5日（周六）\n- **时间**：14:00 — 20:00 CEST\n- **地点**：待定（将在 Discord 公告）\n\n## 活动内容\n\n1. 14:00 — 签到与自由交流\n2. 15:00 — 同步观看精选演出片段\n3. 17:00 — 周边交换与展示\n4. 18:30 — 联合晚餐（自费，可选参加）\n\n## 报名方式\n\n请在 Discord #活动报名 频道中填写报名表单。",
+    "cover_image": "https://placehold.co/800x400/0f1e35/e8c547?text=制作人聚会+杜塞尔多夫",
+    "tags": ["聚会", "德国", "杜塞尔多夫", "线下"],
+    "external_link": "#",
+    "status": "upcoming"
+  }
+]

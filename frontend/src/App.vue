@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex flex-col bg-gray-50">
-    <NavBar />
+    <SiteHeader />
     <main class="flex-1">
       <RouterView />
     </main>
@@ -9,6 +9,6 @@
 </template>
 
 <script setup>
-import NavBar from './components/NavBar.vue'
+import SiteHeader from './components/SiteHeader.vue'
 import SiteFooter from './components/SiteFooter.vue'
 </script>
