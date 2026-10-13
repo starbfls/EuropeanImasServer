@@ -13,23 +13,29 @@
       <!-- Join CTAs -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14">
         <!-- Discord -->
-        <a href="#"
-          class="group flex items-center gap-5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl p-6 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
+        <RouterLink
+          to="/discord"
+          class="group relative overflow-hidden flex items-center gap-5 bg-[#5865F2] hover:bg-[#4752e0] text-white rounded-2xl p-6 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
         >
-          <span class="text-4xl shrink-0">💬</span>
+          <img
+            src="/assets/brand/lilja-sd.webp"
+            alt="葛城莉莉娅 Q 版立绘"
+            class="h-28 w-auto shrink-0 -my-3 drop-shadow-lg transition-transform duration-300 group-hover:-translate-y-1"
+          />
           <div>
-            <p class="text-xs uppercase font-extrabold text-indigo-300 tracking-wider mb-1">Chat with us</p>
+            <p class="text-xs uppercase font-extrabold text-indigo-200 tracking-wider mb-1">Chat with us</p>
             <p class="text-xl font-extrabold leading-tight">Discord 服务器</p>
-            <p class="text-xs text-indigo-300 mt-1">点击加入欧洲 iMas Discord</p>
+            <p class="text-xs text-indigo-200 mt-1">正在创建中，点击查看进度</p>
           </div>
-        </a>
+        </RouterLink>
 
         <!-- QQ — opens QR modal -->
         <button
           @click="showQR = true"
           class="group flex items-center gap-5 bg-sky-500 hover:bg-sky-600 text-white rounded-2xl p-6 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-xl w-full text-left"
         >
-          <span class="text-4xl shrink-0">📱</span>
+          <img src="/assets/brand/group-avatar.png" alt="群头像"
+            class="h-16 w-16 rounded-full shrink-0 ring-2 ring-white/40 transition-transform duration-300 group-hover:scale-105" />
           <div>
             <p class="text-xs uppercase font-extrabold text-sky-200 tracking-wider mb-1">Join us on</p>
             <p class="text-xl font-extrabold leading-tight">QQ 制作人群</p>

@@ -17,21 +17,10 @@
           class="flex items-center gap-3 shrink-0 group"
           aria-label="欧洲偶像大师同好会 · 主页"
         >
-          <img
-            src="/logo.png"
-            alt="Logo"
-            class="object-contain opacity-90 group-hover:opacity-100 transition-all duration-300"
-            :class="scrolled ? 'h-7 w-7' : 'h-9 w-9'"
+          <BrandLogo
+            size="sm"
+            class="opacity-90 group-hover:opacity-100 transition-opacity duration-300"
           />
-          <div class="leading-tight hidden sm:block">
-            <p class="text-xs font-extrabold tracking-[0.15em] uppercase text-white/90 transition-all duration-300">
-              468 PRODUCTION
-            </p>
-            <p class="text-[10px] font-medium text-white/40 tracking-widest">
-              THE EUROPE<span class="text-yellow-400">@</span>N
-              IDOLM<span class="text-yellow-400">@</span>STER BRANCH
-            </p>
-          </div>
         </RouterLink>
 
         <!-- ── Desktop Nav ────────────────────────────────────────────────────── -->
@@ -89,6 +78,7 @@
 </template>
 
 <script setup>
+import BrandLogo from './BrandLogo.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 
 // ── 滚动时缩小 ──
@@ -114,7 +104,7 @@ const mobileOpen = ref(false)
 const navLinks = [
   { to: '/',               label: '主页',            icon: '🏠' },
   { to: '/announcements',  label: '活动公告',        icon: '📢' },
-  { to: '/event-records',  label: '活动记录',        icon: '📝' },
+  { to: '/imas-calendar',  label: '偶像大师日历',    icon: '🎤' },
   { to: '/gallery',        label: '照片墙 Gallery',  icon: '🖼️' },
   { to: '/business-cards', label: '名片墙',          icon: '🪪' },
   { to: '/rules',          label: '规章 & 链接',     icon: '📋' },

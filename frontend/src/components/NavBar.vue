@@ -65,7 +65,7 @@ const isOpen = ref(false)
 const navLinks = [
   { to: '/', label: '主页' },
   { to: '/announcements', label: '活动公告' },
-  { to: '/event-records', label: '活动记录' },
+  { to: '/imas-calendar', label: '偶像大师日历' },
   { to: '/gallery', label: '照片墙 Gallery' },
   { to: '/business-cards', label: '名片墙' },
   { to: '/rules', label: '规章 & 链接' },

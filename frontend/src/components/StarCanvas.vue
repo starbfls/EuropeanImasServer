@@ -11,17 +11,14 @@ let stars = []
 let shooters = []
 let lastShooterTime = 0
 
-function mkStars(w, h, count = 180) {
+function mkStars(w, h, count) {
   return Array.from({ length: count }, () => ({
     x: Math.random() * w,
     y: Math.random() * h,
     r: Math.random() * 1.4 + 0.2,
-    // base opacity 0.3-1
     op: Math.random() * 0.7 + 0.3,
-    // twinkle direction & speed
     td: Math.random() > 0.5 ? 1 : -1,
     ts: Math.random() * 0.008 + 0.003,
-    // drift
     drift: Math.random() * 0.04 + 0.01,
   }))
 }
@@ -42,7 +39,6 @@ function addShooter(w, h) {
 function draw(ctx, w, h, now) {
   ctx.clearRect(0, 0, w, h)
 
-  // Background gradient
   const grad = ctx.createLinearGradient(0, 0, w * 0.3, h)
   grad.addColorStop(0, '#07091a')
   grad.addColorStop(0.5, '#0b1020')
@@ -50,7 +46,6 @@ function draw(ctx, w, h, now) {
   ctx.fillStyle = grad
   ctx.fillRect(0, 0, w, h)
 
-  // Stars
   for (const s of stars) {
     s.op += s.ts * s.td
     if (s.op > 1) { s.op = 1; s.td = -1 }
@@ -60,13 +55,10 @@ function draw(ctx, w, h, now) {
 
     ctx.beginPath()
     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
-    // Slightly warm/cool hue variation
-    const hue = s.r > 1 ? `rgba(220,235,255,${s.op})` : `rgba(255,255,255,${s.op})`
-    ctx.fillStyle = hue
+    ctx.fillStyle = s.r > 1 ? `rgba(220,235,255,${s.op})` : `rgba(255,255,255,${s.op})`
     ctx.fill()
   }
 
-  // Shooting stars
   if (now - lastShooterTime > 4500 + Math.random() * 4000) {
     addShooter(w, h)
     lastShooterTime = now
@@ -78,7 +70,7 @@ function draw(ctx, w, h, now) {
     const tailX = s.x - s.vx * (s.len / 10)
     const tailY = s.y - s.vy * (s.len / 10)
     const g = ctx.createLinearGradient(tailX, tailY, s.x, s.y)
-    g.addColorStop(0, `rgba(255,255,255,0)`)
+    g.addColorStop(0, 'rgba(255,255,255,0)')
     g.addColorStop(1, `rgba(255,255,255,${s.life * 0.9})`)
     ctx.beginPath()
     ctx.moveTo(tailX, tailY)
@@ -91,22 +83,29 @@ function draw(ctx, w, h, now) {
   }
 }
 
-function loop(ctx, w, h) {
-  draw(ctx, w, h, performance.now())
-  animId = requestAnimationFrame(() => loop(ctx, w, h))
-}
-
 onMounted(() => {
   const el = canvas.value
   const parent = el.parentElement
+  const ctx = el.getContext('2d')
+  let cssW = 0
+  let cssH = 0
+
   const resize = () => {
-    el.width = parent.offsetWidth
-    el.height = parent.offsetHeight
-    stars = mkStars(el.width, el.height)
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    cssW = parent.offsetWidth
+    cssH = parent.offsetHeight
+    el.width = Math.round(cssW * dpr)
+    el.height = Math.round(cssH * dpr)
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    stars = mkStars(cssW, cssH, cssW < 640 ? 110 : 180)
   }
   resize()
-  const ctx = el.getContext('2d')
-  loop(ctx, el.width, el.height)
+
+  const loop = () => {
+    draw(ctx, cssW, cssH, performance.now())
+    animId = requestAnimationFrame(loop)
+  }
+  loop()
 
   const ro = new ResizeObserver(resize)
   ro.observe(parent)

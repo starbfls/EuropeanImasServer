@@ -4,12 +4,7 @@
 
       <!-- Brand -->
       <div class="md:col-span-2">
-        <div class="flex items-center gap-3 mb-4">
-          <img src="/logo.png" alt="Logo" class="h-8 w-8 object-contain opacity-80" />
-          <p class="text-white font-extrabold text-xs tracking-widest uppercase">
-            THE EUROPE<span class="text-yellow-400">@</span>N IDOLM<span class="text-yellow-400">@</span>STER UNION
-          </p>
-        </div>
+        <BrandLogo size="sm" align="start" class="mb-4 opacity-85" />
         <p class="text-xs leading-relaxed text-white/40 max-w-sm">
           欧洲偶像大师制作人联盟，是由散布在欧洲各地的偶像大师爱好者自发组成的同好社群。<br />
           This is an unofficial fan community. Not affiliated with Bandai Namco Entertainment or BNSI.
@@ -34,24 +29,25 @@
         <div class="space-y-4">
           <!-- QQ group link -->
           <RouterLink to="/rules" class="flex items-center gap-2.5 group">
-            <span class="w-7 h-7 rounded-lg bg-sky-500/80 flex items-center justify-center text-white text-xs font-black shrink-0">
-              Q
-            </span>
+            <img src="/assets/brand/group-avatar.png" alt="群头像"
+              class="w-8 h-8 rounded-full shrink-0 ring-1 ring-white/15 group-hover:ring-white/40 transition-all" />
             <div>
               <p class="text-xs font-bold text-white/60 group-hover:text-white/90 transition-colors">QQ 制作人群</p>
               <p class="text-[11px] text-white/30">前往规章页面查看二维码</p>
             </div>
           </RouterLink>
           <!-- Discord -->
-          <a href="#" class="flex items-center gap-2.5 group">
-            <span class="w-7 h-7 rounded-lg bg-indigo-500/80 flex items-center justify-center text-white text-xs font-black shrink-0">
-              D
+          <RouterLink to="/discord" class="flex items-center gap-2.5 group">
+            <span class="w-8 h-8 rounded-full bg-[#5865F2]/85 flex items-center justify-center shrink-0 ring-1 ring-white/10 group-hover:ring-white/35 transition-all">
+              <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.3.5c1.6.4 2.9 1 4.2 1.9a14 14 0 0 0-12.6 0A13 13 0 0 1 11 3.5L10.7 3a19.8 19.8 0 0 0-5 1.4C2.6 9 1.8 13.4 2.2 17.8a19.9 19.9 0 0 0 6 3l1.2-1.8c-.7-.2-1.3-.5-1.9-.9l.4-.3a14.2 14.2 0 0 0 12.2 0l.4.3c-.6.4-1.2.7-1.9 1l1.2 1.7a19.9 19.9 0 0 0 6-3c.5-5.1-.8-9.5-3.5-13.4ZM8.9 15.1c-1.2 0-2.1-1.1-2.1-2.4S7.7 10.3 9 10.3s2.1 1.1 2.1 2.4-1 2.4-2.1 2.4Zm6.3 0c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.1 1.1 2.1 2.4-.9 2.4-2.1 2.4Z"/>
+              </svg>
             </span>
             <div>
               <p class="text-xs font-bold text-white/60 group-hover:text-white/90 transition-colors">Discord 服务器</p>
-              <p class="text-[11px] text-white/30">European iMas Community</p>
+              <p class="text-[11px] text-white/30">正在创建中</p>
             </div>
-          </a>
+          </RouterLink>
         </div>
       </div>
     </div>
@@ -66,10 +62,11 @@
 </template>
 
 <script setup>
+import BrandLogo from './BrandLogo.vue'
 const navLinks = [
   { to: '/', label: '主页' },
   { to: '/announcements', label: '活动公告' },
-  { to: '/event-records', label: '活动记录' },
+  { to: '/imas-calendar', label: '偶像大师日历' },
   { to: '/gallery', label: '照片墙 Gallery' },
   { to: '/business-cards', label: '名片墙' },
   { to: '/rules', label: '规章 & 链接' },

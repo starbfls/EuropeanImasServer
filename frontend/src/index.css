@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── 自托管字体（下载自 fontsource，OFL 授权）────────────────────────────── */
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/assets/fonts/space-grotesk-latin-500-normal.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/assets/fonts/space-grotesk-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/assets/fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/assets/fonts/jetbrains-mono-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  /* 欧盟旗标准金，站点主强调色 */
+  --eu-gold: #FFCC00;
+  --eu-gold-soft: #FFE066;
+  --eu-navy: #07091a;
+}
+
 html, body, #app {
   font-family: 'Nunito', sans-serif;
   scroll-behavior: smooth;
@@ -25,4 +58,67 @@ html, body, #app {
   .border-white\/8 {
     border-color: rgba(255, 255, 255, 0.08);
   }
+
+  /* 展示页排版：标题用 Space Grotesk，数字与日期用等宽 */
+  .font-display {
+    font-family: 'Space Grotesk', 'Nunito', sans-serif;
+  }
+  .font-mono-num {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ── 装饰图层 ──────────────────────────────────────────────────────────── */
+.layer-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/textures/grain.svg');
+  background-size: 220px 220px;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.layer-grid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/textures/grid.svg');
+  background-size: 64px 64px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 横向滚动跑马灯 */
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-x 38s linear infinite;
+}
+.marquee-host:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* 滚动进场 */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
 }

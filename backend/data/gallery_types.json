@@ -1,0 +1,12 @@
+[
+  { "id": "million14th", "label": "百万现场 14th", "group": "现地" },
+  { "id": "shiny_msp2", "label": "闪耀色彩 MSP Solo Live 2", "group": "现地" },
+  { "id": "other_live", "label": "其他现地", "group": "现地" },
+  { "id": "jw_madrid", "label": "马德里 Japan Weekend", "group": "展会 / 活动" },
+  { "id": "mcm_london", "label": "伦敦 MCM", "group": "展会 / 活动" },
+  { "id": "other_event", "label": "其他活动", "group": "展会 / 活动" },
+  { "id": "doll", "label": "娃娃", "group": "日常" },
+  { "id": "goods", "label": "周边 / 谷子", "group": "日常" },
+  { "id": "meetup", "label": "聚餐 / 线下", "group": "日常" },
+  { "id": "daily", "label": "日常", "group": "日常" }
+]

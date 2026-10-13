@@ -20,7 +20,7 @@
           <span class="text-xs text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full font-bold">需人工审核</span>
         </div>
 
-        <form @submit.prevent="handleSubmit" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        <form ref="formEl" @submit.prevent="handleSubmit" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
           <!-- Front upload -->
           <label class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-colors group">
             <span class="text-3xl">🪪</span>
@@ -45,6 +45,13 @@
               v-model="ownerName"
               type="text"
               placeholder="你的制作人称号（如：德国制P）"
+              class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-400 transition-colors"
+              maxlength="30"
+            />
+            <input
+              v-model="oshiName"
+              type="text"
+              placeholder="你推的偶像（选填）"
               class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-400 transition-colors"
               maxlength="30"
             />
@@ -86,16 +93,28 @@
 
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="card in cards" :key="card.id" class="group">
-          <!-- Flip card -->
-          <div class="card-flip-wrapper aspect-[7/4] cursor-pointer">
-            <div class="card-flip-inner">
+          <!-- 翻转卡：比例按正反面里更"竖"的那张算，两面都用 contain，不裁图 -->
+          <div
+            class="card-flip-wrapper cursor-pointer"
+            :style="{ aspectRatio: aspectOf(card.id, showBack(card.id) ? 'back' : 'front') }"
+            @mouseenter="hovered = card.id"
+            @mouseleave="hovered = null"
+            @click="toggleFlip(card.id)"
+          >
+            <div class="card-flip-inner" :class="{ 'is-flipped': showBack(card.id) }">
               <!-- Front -->
-              <div class="card-face card-front rounded-2xl overflow-hidden shadow-md">
-                <img :src="card.front" :alt="`${card.owner} 名片正面`" class="w-full h-full object-cover" />
+              <div class="card-face card-front rounded-2xl overflow-hidden shadow-md bg-gray-100">
+                <img :src="card.front" :alt="`${card.owner} 名片正面`"
+                  class="w-full h-full object-contain"
+                  :ref="(el) => measure(el, card.id, 'front')"
+                  @load="(e) => measure(e.target, card.id, 'front')" />
               </div>
               <!-- Back -->
-              <div class="card-face card-back rounded-2xl overflow-hidden shadow-md">
-                <img :src="card.back" :alt="`${card.owner} 名片背面`" class="w-full h-full object-cover" />
+              <div class="card-face card-back rounded-2xl overflow-hidden shadow-md bg-gray-100">
+                <img :src="card.back" :alt="`${card.owner} 名片背面`"
+                  class="w-full h-full object-contain"
+                  :ref="(el) => measure(el, card.id, 'back')"
+                  @load="(e) => measure(e.target, card.id, 'back')" />
               </div>
             </div>
           </div>
@@ -114,13 +133,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 
 const cards = ref([])
 const loading = ref(true)
 const front = ref(null)
 const back = ref(null)
 const ownerName = ref('')
+const oshiName = ref('')
+const formEl = ref(null)
 const submitting = ref(false)
 const submitMsg = ref('')
 const submitSuccess = ref(false)
@@ -129,19 +150,63 @@ async function handleSubmit() {
   submitting.value = true
   submitMsg.value = ''
   try {
-    // Mock API call — real upload logic uses FormData
-    await new Promise(r => setTimeout(r, 800))
+    const form = new FormData()
+    form.append('front', front.value)
+    form.append('back', back.value)
+    form.append('owner', ownerName.value.trim())
+    form.append('oshi', oshiName.value.trim())
+
+    const r = await fetch('/api/business-cards', { method: 'POST', body: form })
+    const body = await r.json()
+    if (!r.ok || !body.success) throw new Error(body.error || '提交失败')
+
     submitSuccess.value = true
-    submitMsg.value = '名片已提交，正在审核中。审核通过后将显示在名片墙上，感谢你的参与！'
+    submitMsg.value = body.message
     front.value = null
     back.value = null
     ownerName.value = ''
-  } catch {
+    oshiName.value = ''
+    formEl.value?.reset()
+  } catch (e) {
     submitSuccess.value = false
-    submitMsg.value = '提交失败，请稍后重试。'
+    submitMsg.value = `${e.message}，请稍后重试。`
   } finally {
     submitting.value = false
   }
+}
+
+// ── 卡片比例：名片有横版也有竖版，容器跟着当前显示的那一面走 ──────────
+// 正反面比例一致时（绝大多数情况）翻面不会有任何尺寸变化；
+// 只有正反朝向不同的卡片才会在翻面时改变高度，两面都能完整显示。
+const DEFAULT_ASPECT = 7 / 4
+const dims = reactive({})
+
+// 走两条路：ref 回调覆盖"图片已在缓存里、load 早于监听器绑定"的情况，
+// @load 覆盖正常网络加载。两边都调这个函数，重复写入同一个值无副作用。
+function measure(el, id, side) {
+  if (!el) return
+  const { naturalWidth: w, naturalHeight: h } = el
+  if (!w || !h) return
+  const ratio = Math.min(Math.max(w / h, 0.5), 2.4)
+  if (!dims[id]) dims[id] = {}
+  if (dims[id][side] !== ratio) dims[id][side] = ratio
+}
+
+function aspectOf(id, side) {
+  const d = dims[id]
+  if (!d) return DEFAULT_ASPECT
+  return d[side] ?? d.front ?? d.back ?? DEFAULT_ASPECT
+}
+
+// 翻面：桌面端悬停，触屏点击。两者都走同一个状态，
+// 尺寸直接写成内联 style，避免 CSS 变量 + :hover 之间的层叠问题。
+const flipped = reactive(new Set())
+const hovered = ref(null)
+
+const showBack = (id) => hovered.value === id || flipped.has(id)
+
+function toggleFlip(id) {
+  flipped.has(id) ? flipped.delete(id) : flipped.add(id)
 }
 
 onMounted(async () => {
@@ -149,11 +214,8 @@ onMounted(async () => {
     const r = await fetch('/api/business-cards')
     cards.value = (await r.json()).data
   } catch {
-    cards.value = [
-      { id: 1, front: 'https://placehold.co/350x200/1a2035/e8c547?text=名刺+正面', back: 'https://placehold.co/350x200/0d1423/60aac4?text=名刺+背面', owner: '德国制P / 慕尼黑', oshi: '宫本芙蕾德莉卡' },
-      { id: 2, front: 'https://placehold.co/350x200/2a1030/e8c547?text=名刺+正面', back: 'https://placehold.co/350x200/1a0820/c460aa?text=名刺+背面', owner: '法国制P / 巴黎', oshi: '艾米丽·斯图亚特' },
-      { id: 3, front: 'https://placehold.co/350x200/101a30/e8c547?text=名刺+正面', back: 'https://placehold.co/350x200/081018/aa60c4?text=名刺+背面', owner: '荷兰制P / 阿姆斯特丹', oshi: '诗花' },
-    ]
+    // 后端不可用时不再塞占位图，直接走空状态
+    cards.value = []
   } finally {
     loading.value = false
   }
@@ -161,7 +223,10 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.card-flip-wrapper { perspective: 900px; }
+.card-flip-wrapper {
+  perspective: 900px;
+  transition: aspect-ratio 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 .card-flip-inner {
   position: relative;
@@ -170,7 +235,7 @@ onMounted(async () => {
   transform-style: preserve-3d;
   transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.group:hover .card-flip-inner { transform: rotateY(180deg); }
+.card-flip-inner.is-flipped { transform: rotateY(180deg); }
 
 .card-face {
   position: absolute;
