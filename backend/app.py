@@ -3,30 +3,27 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import json
-import secrets
-import threading
-from datetime import datetime
 from pathlib import Path
 
+load_dotenv(Path(__file__).parent / '.env')
+
 from auth import admin_required, current_admin, issue_token, verify_credentials
+from submission_store import get_store
 from uploads import (
     MAX_IMAGE_BYTES,
     UPLOAD_ROOT,
     UploadError,
     check_rate_limit,
-    delete_upload,
     rollback_rate_limit,
-    save_image,
 )
-
-load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
 # ── 数据与上传 ────────────────────────────────────────────────────────────────
 DATA_DIR = Path(__file__).parent / 'data'
-UPLOAD_ROOT.mkdir(parents=True, exist_ok=True)
+if os.getenv('STORAGE_BACKEND', 'local') == 'local':
+    UPLOAD_ROOT.mkdir(parents=True, exist_ok=True)
 
 app.config['MAX_CONTENT_LENGTH'] = 3 * MAX_IMAGE_BYTES   # 整个请求上限
 
@@ -43,8 +40,6 @@ def gallery_types() -> list:
 
 def gallery_type_map() -> dict:
     return {t['id']: t for t in gallery_types() if t.get('id')}
-
-_write_lock = threading.Lock()
 
 
 # 只有确实部署在反向代理后面时才把 X-Forwarded-For 当真。
@@ -90,16 +85,6 @@ def load_data(filename: str) -> list:
         return json.load(f)
 
 
-def save_data(filename: str, data: list) -> None:
-    """原子写回 data/ 目录下的 JSON 文件。"""
-    path = DATA_DIR / filename
-    tmp = path.with_suffix('.tmp')
-    with open(tmp, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-        f.write('\n')
-    os.replace(tmp, path)
-
-
 # ── 公开 API ──────────────────────────────────────────────────────────────────
 
 @app.route('/api/announcements', methods=['GET'])
@@ -135,10 +120,11 @@ def _with_label(photo: dict) -> dict:
 
 @app.route('/api/gallery', methods=['GET'])
 def get_gallery():
-    data = load_data('gallery.json')
-    approved = [p for p in data if p.get("approved")]
-    approved.sort(key=lambda p: p.get("submitted_at", ""), reverse=True)
-    return jsonify({"success": True, "data": [_with_label(p) for p in approved]})
+    try:
+        rows = get_store().list('gallery')
+        return jsonify({"success": True, "data": [_with_label(p) for p in rows]})
+    except Exception:
+        return storage_error()
 
 
 @app.route('/api/gallery/types', methods=['GET'])
@@ -149,7 +135,7 @@ def get_gallery_types():
 
 @app.route('/api/gallery', methods=['POST'])
 def submit_gallery_photo():
-    """访客上传照片，落盘后进入待审核队列。"""
+    """访客上传照片；云端模式下先保存到私有桶，审核前不公开。"""
     title = (request.form.get('title') or '').strip()
     photo_type = (request.form.get('type') or '').strip()
     uploader = (request.form.get('uploader') or '').strip()
@@ -170,30 +156,17 @@ def submit_gallery_photo():
         return jsonify({"success": False, "error": str(exc)}), 429
 
     try:
-        saved = save_image(photo, 'gallery', 'photo', thumbnail=True)
+        get_store().create('gallery', {
+            'title': title[:60], 'type': photo_type,
+            'type_label': types[photo_type].get('label', photo_type),
+            'uploader': uploader[:30] or '匿名制作人',
+        }, {'url': photo})
     except UploadError as exc:
         rollback_rate_limit(ip)
         return jsonify({"success": False, "error": str(exc)}), 400
     except Exception:
-        app.logger.exception('照片上传处理失败')
         rollback_rate_limit(ip)
-        return jsonify({"success": False, "error": "图片处理失败，请换一张试试"}), 400
-
-    with _write_lock:
-        photos = load_data('gallery.json')
-        photos.append({
-            "id": max((p["id"] for p in photos), default=0) + 1,
-            "title": title[:60],
-            "type": photo_type,
-            # 存一份当时的名字：万一以后这个分类从列表里删掉，老照片仍有可读的标签
-            "type_label": types[photo_type].get('label', photo_type),
-            "url": saved["url"],
-            "thumbnail": saved["thumbnail"],
-            "uploader": uploader[:30] or "匿名制作人",
-            "approved": False,
-            "submitted_at": datetime.now().isoformat(timespec='seconds'),
-        })
-        save_data('gallery.json', photos)
+        return storage_error()
 
     return jsonify({
         "success": True,
@@ -203,14 +176,15 @@ def submit_gallery_photo():
 
 @app.route('/api/business-cards', methods=['GET'])
 def get_business_cards():
-    data = load_data('business_cards.json')
-    approved = [c for c in data if c.get("approved")]
-    return jsonify({"success": True, "data": approved})
+    try:
+        return jsonify({"success": True, "data": get_store().list('business_cards')})
+    except Exception:
+        return storage_error()
 
 
 @app.route('/api/business-cards', methods=['POST'])
 def submit_business_card():
-    """访客上传名片正反面，落盘后进入待审核队列。"""
+    """访客上传名片正反面，保存后进入待审核队列。"""
     owner = (request.form.get('owner') or '').strip()
     oshi = (request.form.get('oshi') or '').strip()
     front = request.files.get('front')
@@ -227,36 +201,15 @@ def submit_business_card():
     except UploadError as exc:
         return jsonify({"success": False, "error": str(exc)}), 429
 
-    saved = []
     try:
-        front_url = save_image(front, 'business_cards', 'front')['url']
-        saved.append(front_url)
-        back_url = save_image(back, 'business_cards', 'back')['url']
-        saved.append(back_url)
+        get_store().create('business_cards', {'owner': owner[:30], 'oshi': oshi[:30] or '未填写'},
+                           {'front': front, 'back': back})
     except UploadError as exc:
-        for url in saved:
-            delete_upload(url)
         rollback_rate_limit(ip)
         return jsonify({"success": False, "error": str(exc)}), 400
     except Exception:
-        app.logger.exception('名片上传处理失败')
-        for url in saved:
-            delete_upload(url)
         rollback_rate_limit(ip)
-        return jsonify({"success": False, "error": "图片处理失败，请换一张试试"}), 400
-
-    with _write_lock:
-        cards = load_data('business_cards.json')
-        cards.append({
-            "id": max((c["id"] for c in cards), default=0) + 1,
-            "front": front_url,
-            "back": back_url,
-            "owner": owner[:30],
-            "oshi": oshi[:30] or "未填写",
-            "approved": False,
-            "submitted_at": datetime.now().isoformat(timespec='seconds'),
-        })
-        save_data('business_cards.json', cards)
+        return storage_error()
 
     return jsonify({
         "success": True,
@@ -266,13 +219,21 @@ def submit_business_card():
 
 @app.route('/uploads/<path:filename>', methods=['GET'])
 def serve_upload(filename):
-    """开发环境下由 Flask 直接提供上传图片；生产环境建议交给 Nginx。"""
+    """仅兼容本地开发图片，云端模式不暴露遗留上传目录。"""
+    if os.getenv('STORAGE_BACKEND', 'local').strip().lower() != 'local':
+        return jsonify({'success': False, 'error': '未找到'}), 404
     return send_from_directory(UPLOAD_ROOT, filename)
 
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
     return jsonify({"status": "ok", "message": "欧洲偶像大师制作人联盟服务器运行中"})
+
+
+def storage_error():
+    # 详细异常仅留在服务端；不向浏览器泄漏云端响应、签名 URL 或配置。
+    app.logger.exception('投稿存储服务操作失败')
+    return jsonify({'success': False, 'error': '投稿存储服务暂时不可用，请稍后重试；管理员可检查后端日志。'}), 503
 
 
 # ── 管理员 API ────────────────────────────────────────────────────────────────
@@ -302,40 +263,36 @@ def admin_me():
 def admin_list_business_cards():
     """status=pending（默认）/ approved / all。"""
     status = request.args.get('status', 'pending')
-    cards = load_data('business_cards.json')
-    if status == 'pending':
-        cards = [c for c in cards if not c.get('approved')]
-    elif status == 'approved':
-        cards = [c for c in cards if c.get('approved')]
-    return jsonify({"success": True, "data": cards})
+    if status not in ('pending', 'approved', 'all'):
+        return jsonify({'success': False, 'error': '无效的审核状态'}), 400
+    try:
+        return jsonify({"success": True, "data": get_store().list('business_cards', status)})
+    except Exception:
+        return storage_error()
 
 
 @app.route('/api/admin/business-cards/<int:item_id>/approve', methods=['POST'])
 @admin_required
 def admin_approve_business_card(item_id):
-    with _write_lock:
-        cards = load_data('business_cards.json')
-        card = next((c for c in cards if c["id"] == item_id), None)
+    try:
+        card = get_store().approve('business_cards', item_id)
         if not card:
             return jsonify({"success": False, "error": "未找到"}), 404
-        card["approved"] = True
-        save_data('business_cards.json', cards)
-    return jsonify({"success": True, "data": card})
+        return jsonify({"success": True, "data": card})
+    except Exception:
+        return storage_error()
 
 
 @app.route('/api/admin/business-cards/<int:item_id>', methods=['DELETE'])
 @admin_required
 def admin_delete_business_card(item_id):
     """驳回或下架：删除记录并清理已上传的图片。"""
-    with _write_lock:
-        cards = load_data('business_cards.json')
-        card = next((c for c in cards if c["id"] == item_id), None)
-        if not card:
+    try:
+        if not get_store().delete('business_cards', item_id):
             return jsonify({"success": False, "error": "未找到"}), 404
-        save_data('business_cards.json', [c for c in cards if c["id"] != item_id])
-    delete_upload(card.get('front'))
-    delete_upload(card.get('back'))
-    return jsonify({"success": True, "message": "已删除"})
+        return jsonify({"success": True, "message": "已删除"})
+    except Exception:
+        return storage_error()
 
 
 # ── 管理员：照片墙审核 ────────────────────────────────────────────────────────
@@ -345,42 +302,37 @@ def admin_delete_business_card(item_id):
 def admin_list_gallery():
     """status=pending（默认）/ approved / all。"""
     status = request.args.get('status', 'pending')
-    photos = load_data('gallery.json')
-    if status == 'pending':
-        photos = [p for p in photos if not p.get('approved')]
-    elif status == 'approved':
-        photos = [p for p in photos if p.get('approved')]
-    photos.sort(key=lambda p: p.get('submitted_at', ''), reverse=True)
-    return jsonify({"success": True, "data": [_with_label(p) for p in photos]})
+    if status not in ('pending', 'approved', 'all'):
+        return jsonify({'success': False, 'error': '无效的审核状态'}), 400
+    try:
+        photos = get_store().list('gallery', status)
+        return jsonify({"success": True, "data": [_with_label(p) for p in photos]})
+    except Exception:
+        return storage_error()
 
 
 @app.route('/api/admin/gallery/<int:item_id>/approve', methods=['POST'])
 @admin_required
 def admin_approve_gallery(item_id):
-    with _write_lock:
-        photos = load_data('gallery.json')
-        photo = next((p for p in photos if p["id"] == item_id), None)
+    try:
+        photo = get_store().approve('gallery', item_id)
         if not photo:
             return jsonify({"success": False, "error": "未找到"}), 404
-        photo["approved"] = True
-        save_data('gallery.json', photos)
-    return jsonify({"success": True, "data": photo})
+        return jsonify({"success": True, "data": _with_label(photo)})
+    except Exception:
+        return storage_error()
 
 
 @app.route('/api/admin/gallery/<int:item_id>', methods=['DELETE'])
 @admin_required
 def admin_delete_gallery(item_id):
     """驳回或下架：删除记录并清理原图与缩略图。"""
-    with _write_lock:
-        photos = load_data('gallery.json')
-        photo = next((p for p in photos if p["id"] == item_id), None)
-        if not photo:
+    try:
+        if not get_store().delete('gallery', item_id):
             return jsonify({"success": False, "error": "未找到"}), 404
-        save_data('gallery.json', [p for p in photos if p["id"] != item_id])
-    delete_upload(photo.get('url'))
-    if photo.get('thumbnail') != photo.get('url'):
-        delete_upload(photo.get('thumbnail'))
-    return jsonify({"success": True, "message": "已删除"})
+        return jsonify({"success": True, "message": "已删除"})
+    except Exception:
+        return storage_error()
 
 
 @app.errorhandler(413)
@@ -388,6 +340,31 @@ def payload_too_large(_):
     limit = MAX_IMAGE_BYTES // (1024 * 1024)
     return jsonify({"success": False,
                     "error": f"上传内容过大，单张图片请控制在 {limit} MB 以内"}), 413
+
+
+FRONTEND_DIST = Path(__file__).parent.parent / 'frontend' / 'dist'
+
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def frontend_page(path):
+    """生产环境同域提供 Vue 页面；未知 API 不能回退成 HTML。"""
+    if path == 'api' or path.startswith(('api/', 'uploads/')):
+        return jsonify({'success': False, 'error': '未找到'}), 404
+    root = FRONTEND_DIST.resolve()
+    target = (root / path).resolve()
+    if not target.is_relative_to(root):
+        return jsonify({'success': False, 'error': '未找到'}), 404
+    if target.is_file():
+        return send_from_directory(root, path)
+    # 缺失的 JS/CSS/图片不能伪装成成功返回的 index.html。
+    if path.startswith('assets/') or Path(path).suffix:
+        return jsonify({'success': False, 'error': '未找到'}), 404
+    if not (root / 'index.html').is_file():
+        return jsonify({'success': False, 'error': '前端尚未构建，请执行 npm run build 或使用 Vite 开发服务器。'}), 503
+    response = send_from_directory(root, 'index.html')
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
 
 
 if __name__ == '__main__':

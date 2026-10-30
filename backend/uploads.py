@@ -116,11 +116,11 @@ def _sniff(head: bytes) -> str:
     raise UploadError('只支持 JPG / PNG / WEBP / GIF 格式的图片')
 
 
-def save_image(storage, kind: str, prefix: str, thumbnail: bool = False) -> dict:
-    """校验、**重新编码**并保存一张上传的图片。
+def prepare_image(storage, kind: str, prefix: str, thumbnail: bool = False) -> dict:
+    """校验、重新编码到内存；本地存储和 Supabase 共用这一步。
 
     kind 是 uploads/ 下的子目录名（business_cards / gallery）。
-    返回 {'url': ..., 'thumbnail': ...}，thumbnail=False 时两者相同。
+    返回 image / thumbnail 两个资源，各包含 path、data、content_type。
 
     关键点：落盘的不是用户上传的原始字节，而是 Pillow 重新编码出来的图像。
     这一步同时解决三件事：
@@ -145,9 +145,9 @@ def save_image(storage, kind: str, prefix: str, thumbnail: bool = False) -> dict
 
     # 2) 先只读尺寸（不解码像素），挡掉解压炸弹
     try:
-        probe = Image.open(stream)
-        w, h = probe.size
-        n_frames = getattr(probe, 'n_frames', 1)
+        with Image.open(stream) as probe:
+            w, h = probe.size
+            n_frames = getattr(probe, 'n_frames', 1)
     except Image.DecompressionBombError:
         raise UploadError('图片分辨率过高，疑似解压炸弹，请压缩后再上传')
     except Exception:
@@ -162,9 +162,6 @@ def save_image(storage, kind: str, prefix: str, thumbnail: bool = False) -> dict
             f'图片分辨率过高（{w}×{h}），请压缩到 {MAX_PIXELS // 1_000_000} 百万像素以内'
         )
 
-    if total_upload_bytes() + size > MAX_TOTAL_BYTES:
-        raise UploadError('服务器图片存储空间已满，请联系管理员')
-
     # 3) 真正解码并重新编码
     try:
         im = Image.open(stream)
@@ -178,16 +175,19 @@ def save_image(storage, kind: str, prefix: str, thumbnail: bool = False) -> dict
                 im = im.convert('RGBA')
         else:
             save_kw = dict(save_kw)                    # 动图保持原样，只做重编码
+        # PNG 等格式会自动沿用 info 中的 EXIF/文本字段，需要显式清除。
+        # GIF 只保留播放所需元信息，不携带任意注释与 EXIF。
+        im.info = {key: value for key, value in im.info.items()
+                   if animated and key in ('duration', 'loop', 'transparency', 'background', 'disposal')}
     except Image.DecompressionBombError:
         raise UploadError('图片分辨率过高，疑似解压炸弹')
     except (UnidentifiedImageError, OSError, ValueError, SyntaxError):
         raise UploadError('图片已损坏或不是有效的图片文件')
 
-    target_dir = UPLOAD_ROOT / kind
-    target_dir.mkdir(parents=True, exist_ok=True)
+    if kind not in ('gallery', 'business_cards'):
+        raise UploadError('无效的上传分类')
     stem = f'{prefix}_{secrets.token_hex(8)}'
     name = stem + out_ext
-    dest = target_dir / name
 
     try:
         # 先编码到内存，确认能写成功再落盘，避免留下半截文件
@@ -196,11 +196,9 @@ def save_image(storage, kind: str, prefix: str, thumbnail: bool = False) -> dict
         data = buf.getvalue()
         if len(data) > MAX_IMAGE_BYTES * 2:
             raise UploadError('图片处理后体积过大')
-        dest.write_bytes(data)
     except UploadError:
         raise
     except Exception:
-        dest.unlink(missing_ok=True)
         raise UploadError('图片处理失败，请换一张试试')
     finally:
         try:
@@ -208,21 +206,45 @@ def save_image(storage, kind: str, prefix: str, thumbnail: bool = False) -> dict
         except Exception:
             pass
 
-    url = f'/uploads/{kind}/{name}'
+    content_types = {'JPEG': 'image/jpeg', 'PNG': 'image/png', 'WEBP': 'image/webp', 'GIF': 'image/gif'}
+    asset = {'path': f'{kind}/{name}', 'data': data, 'content_type': content_types[fmt]}
     if not thumbnail:
-        return {'url': url, 'thumbnail': url}
+        return {'image': asset, 'thumbnail': asset}
 
     thumb_name = f'{stem}_thumb.webp'
     try:
-        with Image.open(dest) as t:
+        with Image.open(io.BytesIO(data)) as t:
             t = t.convert('RGB')
             t.thumbnail((THUMB_MAX_EDGE, THUMB_MAX_EDGE), Image.LANCZOS)
-            t.save(target_dir / thumb_name, 'WEBP', quality=82, method=5)
-        thumb_url = f'/uploads/{kind}/{thumb_name}'
+            thumb_buf = io.BytesIO()
+            t.save(thumb_buf, 'WEBP', quality=82, method=5)
+        thumb_asset = {'path': f'{kind}/{thumb_name}', 'data': thumb_buf.getvalue(), 'content_type': 'image/webp'}
     except Exception:
-        thumb_url = url          # 缩略图失败不影响主流程，退回用原图
+        thumb_asset = asset      # 缩略图失败不影响主流程，退回用原图
 
-    return {'url': url, 'thumbnail': thumb_url}
+    return {'image': asset, 'thumbnail': thumb_asset}
+
+
+def save_image(storage, kind: str, prefix: str, thumbnail: bool = False) -> dict:
+    """本地开发模式：将校验后的图片保存到 uploads/。"""
+    prepared = prepare_image(storage, kind, prefix, thumbnail)
+    assets = {a['path']: a for a in prepared.values()}
+    if total_upload_bytes() + sum(len(a['data']) for a in assets.values()) > MAX_TOTAL_BYTES:
+        raise UploadError('服务器图片存储空间已满，请联系管理员')
+    written = []
+    try:
+        for path, asset in assets.items():
+            dest = UPLOAD_ROOT / path
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            written.append(dest)
+            dest.write_bytes(asset['data'])
+    except Exception:
+        for dest in written:
+            dest.unlink(missing_ok=True)
+        raise
+
+    return {'url': '/uploads/' + prepared['image']['path'],
+            'thumbnail': '/uploads/' + prepared['thumbnail']['path']}
 
 
 def delete_upload(url: str) -> None:

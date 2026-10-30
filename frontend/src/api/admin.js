@@ -1,4 +1,6 @@
 // 管理员令牌存取与带鉴权的请求封装。
+import { readResponse } from './public'
+
 const TOKEN_KEY = 'imas_admin_token'
 
 export function getToken() {
@@ -19,8 +21,7 @@ export async function login(username, password) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
   })
-  const body = await r.json()
-  if (!r.ok || !body.success) throw new Error(body.error || '登录失败')
+  const body = await readResponse(r)
   setToken(body.data.token)
   return body.data
 }
@@ -37,9 +38,7 @@ export async function adminFetch(url, options = {}) {
     err.status = 401
     throw err
   }
-  const body = await r.json()
-  if (!r.ok || !body.success) throw new Error(body.error || '请求失败')
-  return body
+  return readResponse(r)
 }
 
 export async function verifyToken() {

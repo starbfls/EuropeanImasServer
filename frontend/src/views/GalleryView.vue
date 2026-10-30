@@ -22,7 +22,7 @@
           <span class="shrink-0 text-xs text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full font-bold">需人工审核</span>
         </div>
 
-        <form @submit.prevent="handleSubmit" class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr),minmax(0,1.2fr)] gap-4 items-start">
+        <form ref="formEl" @submit.prevent="handleSubmit" class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr),minmax(0,1.2fr)] gap-4 items-start">
           <!-- 选图 -->
           <label class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-purple-400 hover:bg-purple-50/30 transition-colors group min-h-[168px]">
             <template v-if="preview">
@@ -109,12 +109,16 @@
 
     <!-- Masonry grid -->
     <div class="max-w-6xl mx-auto px-4 py-10">
+      <div v-if="loadError" role="alert" class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {{ loadError }}
+        <button type="button" @click="loadGallery" class="ml-2 font-bold underline">重新加载</button>
+      </div>
       <div v-if="loading" class="columns-2 md:columns-3 lg:columns-4 gap-4">
         <div v-for="i in 10" :key="i" class="break-inside-avoid mb-4 rounded-xl bg-gray-200 animate-pulse"
           :style="`height:${120 + (i % 3) * 70}px`" />
       </div>
 
-      <div v-else-if="filtered.length === 0" class="text-center py-20 text-gray-400 text-sm">
+      <div v-else-if="!loadError && filtered.length === 0" class="text-center py-20 text-gray-400 text-sm">
         该分类暂无照片。
       </div>
 
@@ -161,12 +165,15 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { publicRequest } from '../api/public'
 
 // 分类列表由后端 data/gallery_types.json 提供，加一场 live 不用改前端
 const allTypes = ref([])
 
 const gallery = ref([])
 const loading = ref(true)
+const loadError = ref('')
+const formEl = ref(null)
 const activeFilter = ref('all')
 const lightbox = ref(null)
 
@@ -208,6 +215,12 @@ const submitSuccess = ref(false)
 function pickPhoto(e) {
   const file = e.target.files[0]
   if (!file) return
+  if (file.size > 8 * 1024 * 1024) {
+    submitSuccess.value = false
+    submitMsg.value = '单张图片不能超过 8 MB。'
+    e.target.value = ''
+    return
+  }
   photo.value = file
   if (preview.value) URL.revokeObjectURL(preview.value)
   preview.value = URL.createObjectURL(file)
@@ -220,6 +233,7 @@ function resetForm() {
   title.value = ''
   type.value = ''
   uploader.value = ''
+  formEl.value?.reset()
 }
 
 async function handleSubmit() {
@@ -232,9 +246,7 @@ async function handleSubmit() {
     fd.append('type', type.value)
     fd.append('uploader', uploader.value.trim())
 
-    const r = await fetch('/api/gallery', { method: 'POST', body: fd })
-    const body = await r.json()
-    if (!r.ok || !body.success) throw new Error(body.error || '提交失败，请稍后再试')
+    const body = await publicRequest('/api/gallery', { method: 'POST', body: fd })
 
     submitSuccess.value = true
     submitMsg.value = body.message
@@ -247,22 +259,26 @@ async function handleSubmit() {
   }
 }
 
-onMounted(async () => {
+async function loadGallery() {
+  loading.value = true
+  loadError.value = ''
   try {
     const [photos, types] = await Promise.all([
-      fetch('/api/gallery').then((r) => r.json()),
-      fetch('/api/gallery/types').then((r) => r.json()),
+      publicRequest('/api/gallery'),
+      publicRequest('/api/gallery/types'),
     ])
     gallery.value = photos.data
     allTypes.value = types.data
-  } catch {
-    // 后端不可用时不再塞占位图，直接走空状态
+  } catch (e) {
+    loadError.value = e.message
     gallery.value = []
     allTypes.value = []
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(loadGallery)
 </script>
 
 <style scoped>

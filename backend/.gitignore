@@ -1,9 +1,14 @@
 venv/
+.venv/
 
 __pycache__/
 *.pyc
 
 .env
+.env.*
+!.env.example
+.pytest_cache/
+data/*.tmp
 
 # 用户上传的图片
 uploads/

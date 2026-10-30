@@ -125,7 +125,11 @@
         </div>
       </div>
 
-      <div v-if="!loading && cards.length === 0" class="text-center py-20 text-gray-400 text-sm">
+      <div v-if="loadError" role="alert" class="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {{ loadError }}
+        <button type="button" @click="loadCards" class="ml-2 font-bold underline">重新加载</button>
+      </div>
+      <div v-if="!loading && !loadError && cards.length === 0" class="text-center py-20 text-gray-400 text-sm">
         暂无已审核的名片。成为第一个上传名片的制作人吧！
       </div>
     </div>
@@ -134,9 +138,11 @@
 
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
+import { publicRequest } from '../api/public'
 
 const cards = ref([])
 const loading = ref(true)
+const loadError = ref('')
 const front = ref(null)
 const back = ref(null)
 const ownerName = ref('')
@@ -150,15 +156,16 @@ async function handleSubmit() {
   submitting.value = true
   submitMsg.value = ''
   try {
+    if ([front.value, back.value].some(file => file && file.size > 8 * 1024 * 1024)) {
+      throw new Error('单张图片不能超过 8 MB。')
+    }
     const form = new FormData()
     form.append('front', front.value)
     form.append('back', back.value)
     form.append('owner', ownerName.value.trim())
     form.append('oshi', oshiName.value.trim())
 
-    const r = await fetch('/api/business-cards', { method: 'POST', body: form })
-    const body = await r.json()
-    if (!r.ok || !body.success) throw new Error(body.error || '提交失败')
+    const body = await publicRequest('/api/business-cards', { method: 'POST', body: form })
 
     submitSuccess.value = true
     submitMsg.value = body.message
@@ -169,7 +176,7 @@ async function handleSubmit() {
     formEl.value?.reset()
   } catch (e) {
     submitSuccess.value = false
-    submitMsg.value = `${e.message}，请稍后重试。`
+    submitMsg.value = e.message
   } finally {
     submitting.value = false
   }
@@ -209,17 +216,20 @@ function toggleFlip(id) {
   flipped.has(id) ? flipped.delete(id) : flipped.add(id)
 }
 
-onMounted(async () => {
+async function loadCards() {
+  loading.value = true
+  loadError.value = ''
   try {
-    const r = await fetch('/api/business-cards')
-    cards.value = (await r.json()).data
-  } catch {
-    // 后端不可用时不再塞占位图，直接走空状态
+    cards.value = (await publicRequest('/api/business-cards')).data
+  } catch (e) {
+    loadError.value = e.message
     cards.value = []
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(loadCards)
 </script>
 
 <style scoped>

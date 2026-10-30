@@ -2,6 +2,14 @@
 
 Fan website for **THE EUROPE@N IDOLM@STER UNION** — a community for European iDOLM@STER producers.
 
+## Supabase storage and production deployment
+
+照片墙、名片墙已支持 Supabase PostgreSQL + Storage，保留免注册投稿及管理员审核。
+完整的注册、建表、环境配置、旧数据迁移与部署步骤见 [Supabase 配置指南](docs/SUPABASE_SETUP.md)。
+后端配置模板为 `backend/.env.example`；服务端 Secret key 不得放入前端或提交到 Git。
+默认 `STORAGE_BACKEND=local` 保留本地开发模式，显式设置 `supabase` 后不再写本地投稿 JSON。
+Dockerfile / render.yaml 提供前后端同域部署，用户数据在云端保存，无需投稿数据盘。
+
 ## Tech Stack
 
 | Layer | Technology |

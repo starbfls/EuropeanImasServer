@@ -34,7 +34,7 @@
       </div>
 
       <!-- 状态筛选 -->
-      <div class="flex items-center gap-2 mb-6">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
         <button
           v-for="tab in tabs"
           :key="tab.value"
@@ -46,7 +46,11 @@
         >
           {{ tab.label }}
         </button>
+        <button type="button" @click="load" :disabled="loading || busyId !== null"
+          class="ml-auto px-3 py-1.5 text-xs font-bold text-gray-500 underline disabled:opacity-40">刷新列表</button>
       </div>
+
+      <p class="mb-6 text-xs text-gray-400">待审核图片仅供管理员预览，链接过期时可刷新列表。</p>
 
       <p v-if="error" class="mb-5 px-4 py-3 rounded-xl text-sm font-bold bg-red-50 text-red-700 border border-red-200">
         {{ error }}
@@ -126,7 +130,7 @@
 </template>
 
 <script setup>
-import { computed, h, onMounted, ref } from 'vue'
+import { computed, h, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   approveCard, approvePhoto, clearToken,
@@ -178,6 +182,8 @@ const status = ref('pending')
 const loading = ref(true)
 const busyId = ref(null)
 const error = ref('')
+let previewTimer
+let loadVersion = 0
 
 const api = computed(() =>
   resource.value === 'cards'
@@ -194,14 +200,20 @@ function handleError(e) {
 }
 
 async function load() {
+  const version = ++loadVersion
+  clearTimeout(previewTimer)
   loading.value = true
   error.value = ''
   try {
-    items.value = await api.value.list(status.value)
+    const rows = await api.value.list(status.value)
+    if (version !== loadVersion) return
+    items.value = rows
+    const expiry = Math.min(...rows.filter(item => item.preview_expires_in).map(item => item.preview_expires_in))
+    if (Number.isFinite(expiry)) previewTimer = setTimeout(load, Math.max(30, expiry - 60) * 1000)
   } catch (e) {
-    handleError(e)
+    if (version === loadVersion) handleError(e)
   } finally {
-    loading.value = false
+    if (version === loadVersion) loading.value = false
   }
 }
 
@@ -228,7 +240,7 @@ async function handleApprove(item) {
 }
 
 async function handleDelete(item, label) {
-  if (!confirm(`确定删除${label}？图片会一并从服务器移除，且无法恢复。`)) return
+  if (!confirm(`确定删除${label}？存储中的图片也会一并删除。`)) return
   busyId.value = item.id
   try {
     await api.value.remove(item.id)
@@ -246,4 +258,8 @@ function handleLogout() {
 }
 
 onMounted(load)
+onUnmounted(() => {
+  ++loadVersion
+  clearTimeout(previewTimer)
+})
 </script>
