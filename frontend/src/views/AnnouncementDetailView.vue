@@ -137,7 +137,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { marked } from 'marked'
-import fallbackEvents from '../data/eventsFallback'
+import fallbackEvents from '../data/generated/announcements.json'
 
 const route = useRoute()
 const item = ref(null)

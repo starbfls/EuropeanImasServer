@@ -10,4 +10,5 @@
 **/uploads
 backend/tests
 frontend/tests
+frontend/src/data/generated
 ADMIN.md

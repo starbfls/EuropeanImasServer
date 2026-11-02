@@ -14,7 +14,7 @@ export default [
     country: '法国',
     lang: 'fr',
     accent: '#a78bfa',
-    img: '/Frederica.png',
+    img: '/assets/characters/frederica.png',
     greeting: 'Bonjour ! Bienvenue au club des fans d’IM@S en Europe !',
   },
   {
@@ -26,7 +26,7 @@ export default [
     country: '英国',
     lang: 'en',
     accent: '#7d9ec9',
-    img: '/emily.png',
+    img: '/assets/characters/emily.png',
     greeting: 'Hello! Welcome to the Europe@n IM@S fan community!',
   },
   {
@@ -38,7 +38,7 @@ export default [
     country: '奥地利',
     lang: 'de',
     accent: '#e0b34d',
-    img: '/shika.png',
+    img: '/assets/characters/shika.png',
     greeting: 'Hallo! Willkommen im europäischen IM@S-Fanclub!',
   },
   {
@@ -50,7 +50,7 @@ export default [
     country: '瑞典',
     lang: 'sv',
     accent: '#7dd3fc',
-    img: '/lilja.png',
+    img: '/assets/characters/lilja.png',
     greeting: 'Hej! Välkommen till den europeiska IM@S-fanklubben!',
   },
 ]

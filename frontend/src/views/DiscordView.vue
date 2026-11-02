@@ -61,7 +61,7 @@
               style="background: radial-gradient(ellipse, #5865F2 0%, transparent 70%)" />
             <div class="relative float h-56 w-36 md:h-80 md:w-52 overflow-hidden">
               <img
-                :src="liljaSd"
+                src="/assets/characters/lilja-sd.png"
                 alt="葛城莉莉娅 Q 版立绘"
                 width="1500"
                 height="2000"
@@ -77,10 +77,6 @@
     </section>
   </div>
 </template>
-
-<script setup>
-import liljaSd from '../../Katsuragi_Lilja_SD.png'
-</script>
 
 <style scoped>
 /* 进度条来回跑，表示"在做但还没做完" */

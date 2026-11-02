@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-[#07091a] flex items-center justify-center px-4 py-20">
     <div class="w-full max-w-sm">
       <div class="text-center mb-8">
-        <img src="/logo.png" alt="Logo" class="h-14 w-14 object-contain mx-auto opacity-90" />
+        <img src="/assets/brand/logo.png" alt="Logo" class="h-14 w-14 object-contain mx-auto opacity-90" />
         <p class="text-emerald-400/70 text-xs tracking-[0.3em] uppercase mt-4">Admin</p>
         <h1 class="text-2xl font-extrabold text-white mt-1">管理后台登录</h1>
       </div>

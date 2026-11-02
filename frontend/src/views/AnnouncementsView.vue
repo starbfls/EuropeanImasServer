@@ -268,7 +268,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import fallbackEvents from '../data/eventsFallback'
+import fallbackEvents from '../data/generated/announcements.json'
 
 const items = ref([])
 const loading = ref(true)

@@ -174,7 +174,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
-import imasFallback from '../data/imasFallback'
+import imasFallback from '../data/generated/imas_events.json'
 
 const items = ref([])
 const loading = ref(true)

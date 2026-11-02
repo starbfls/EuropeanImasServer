@@ -4,6 +4,7 @@ import io
 import json
 import os
 import tempfile
+import types
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -13,7 +14,7 @@ from PIL import Image
 from supabase import ClientOptions, create_client
 from werkzeug.datastructures import FileStorage
 
-from submission_store import LocalStore, StoreError, SupabaseStore, get_store
+from submission_store import LocalStore, StoreError, SupabaseStore, get_store, load_supabase_sdk
 from uploads import UploadError, prepare_image
 
 
@@ -262,6 +263,14 @@ class FlaskAndLocalTests(unittest.TestCase):
             with self.assertRaises(StoreError):
                 get_store()
         get_store.cache_clear()
+
+    def test_sql_directory_without_sdk_reports_install_and_start_commands(self):
+        # A missing SDK can resolve to the local supabase/ namespace directory.
+        with patch.dict('sys.modules', {'supabase': types.ModuleType('supabase')}):
+            with self.assertRaises(StoreError) as raised:
+                load_supabase_sdk()
+        self.assertIn('pip install -r requirements.txt', str(raised.exception))
+        self.assertIn(r'.\.venv\Scripts\python.exe app.py', str(raised.exception))
 
     def test_full_flask_cloud_gallery_lifecycle(self):
         from auth import issue_token

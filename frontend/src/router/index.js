@@ -4,6 +4,7 @@ import AnnouncementsView from '../views/AnnouncementsView.vue'
 import AnnouncementDetailView from '../views/AnnouncementDetailView.vue'
 import ImasCalendarView from '../views/ImasCalendarView.vue'
 import GalleryView from '../views/GalleryView.vue'
+import GalleryUploadView from '../views/GalleryUploadView.vue'
 import BusinessCardView from '../views/BusinessCardView.vue'
 import RulesView from '../views/RulesView.vue'
 import DiscordView from '../views/DiscordView.vue'
@@ -17,6 +18,7 @@ const routes = [
   { path: '/announcements/:id', component: AnnouncementDetailView },
   { path: '/imas-calendar', component: ImasCalendarView },
   { path: '/gallery', component: GalleryView },
+  { path: '/gallery/upload', component: GalleryUploadView },
   { path: '/business-cards', component: BusinessCardView },
   { path: '/rules', component: RulesView },
   { path: '/discord', component: DiscordView },

@@ -18,6 +18,21 @@ class StoreError(RuntimeError):
     pass
 
 
+def load_supabase_sdk():
+    """检查实际 SDK，避免把同名 SQL 目录误认成已安装的依赖。"""
+    try:
+        from supabase import ClientOptions, create_client
+    except ImportError as exc:
+        raise StoreError(
+            '当前 Python 环境未安装完整的 Supabase SDK。'
+            '请在 backend 目录执行 '
+            r'.\.venv\Scripts\python.exe -m pip install -r requirements.txt，'
+            '然后使用 '
+            r'.\.venv\Scripts\python.exe app.py 启动后端。'
+        ) from exc
+    return ClientOptions, create_client
+
+
 def utc_now():
     return datetime.now(timezone.utc).isoformat(timespec='seconds')
 
@@ -97,7 +112,7 @@ class SupabaseStore:
             key = os.getenv('SUPABASE_SECRET_KEY', '').strip() or os.getenv('SUPABASE_SERVICE_ROLE_KEY', '').strip()
             if not url or not key:
                 raise StoreError('缺少 SUPABASE_URL / SUPABASE_SECRET_KEY，请按 docs/SUPABASE_SETUP.md 配置')
-            from supabase import ClientOptions, create_client
+            ClientOptions, create_client = load_supabase_sdk()
             client = create_client(url, key, options=ClientOptions(
                 persist_session=False, auto_refresh_token=False,
                 postgrest_client_timeout=30, storage_client_timeout=20,

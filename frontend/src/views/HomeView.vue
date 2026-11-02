@@ -259,8 +259,8 @@ import StarCanvas from '../components/StarCanvas.vue'
 import BrandLogo from '../components/BrandLogo.vue'
 import FlagStrip from '../components/FlagStrip.vue'
 import idols from '../data/idols'
-import fallbackEvents from '../data/eventsFallback'
-import imasFallback from '../data/imasFallback'
+import fallbackEvents from '../data/generated/announcements.json'
+import imasFallback from '../data/generated/imas_events.json'
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 // hero 里被点亮的偶像 key，星座和立绘共用这一个状态

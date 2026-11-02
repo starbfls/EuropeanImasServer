@@ -44,7 +44,7 @@
             <input
               v-model="ownerName"
               type="text"
-              placeholder="你的制作人称号（如：德国制P）"
+              placeholder="你的制作人称号（如：赤羽根P）"
               class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-400 transition-colors"
               maxlength="30"
             />

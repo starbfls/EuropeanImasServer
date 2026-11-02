@@ -1,96 +1,20 @@
 <template>
   <div class="min-h-screen bg-[#f9f8f6]">
     <!-- Header -->
-    <div class="bg-[#07091a] border-b border-white/5 py-12 px-4">
-      <div class="max-w-6xl mx-auto">
-        <p class="text-purple-400/70 text-xs tracking-[0.3em] uppercase mb-2">Gallery</p>
-        <h1 class="text-3xl font-extrabold text-white">照片墙</h1>
-        <p class="text-white/40 text-sm mt-2">现地、展会、娃娃与日常留影 — 无需注册，欢迎投稿</p>
-      </div>
-    </div>
-
-    <!-- 上传 -->
-    <div class="bg-white border-b border-gray-100">
-      <div class="max-w-6xl mx-auto px-4 py-8">
-        <div class="flex items-start justify-between gap-4 mb-5">
-          <div>
-            <h2 class="text-lg font-extrabold text-gray-900">上传你的照片</h2>
-            <p class="text-xs text-gray-400 mt-1">
-              无需注册，经审核后将展示在照片墙上。支持 JPG / PNG / WEBP / GIF，单张不超过 8 MB。
-            </p>
-          </div>
-          <span class="shrink-0 text-xs text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full font-bold">需人工审核</span>
+    <div class="bg-[#07091a] border-b border-white/5 py-8 md:py-10 px-4">
+      <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-5">
+        <div>
+          <p class="text-purple-400/70 text-xs tracking-[0.3em] uppercase mb-2">Gallery</p>
+          <h1 class="text-3xl font-extrabold text-white">照片墙</h1>
+          <p class="text-white/40 text-sm mt-2">现地、展会、娃娃与日常留影</p>
         </div>
-
-        <form ref="formEl" @submit.prevent="handleSubmit" class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr),minmax(0,1.2fr)] gap-4 items-start">
-          <!-- 选图 -->
-          <label class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-purple-400 hover:bg-purple-50/30 transition-colors group min-h-[168px]">
-            <template v-if="preview">
-              <img :src="preview" alt="预览" class="max-h-28 rounded-lg object-contain" />
-              <span class="text-[11px] text-purple-600 font-bold truncate max-w-full">✓ {{ photo.name }}</span>
-              <span class="text-[11px] text-gray-400">点击可重新选择</span>
-            </template>
-            <template v-else>
-              <span class="text-3xl">🖼️</span>
-              <span class="text-xs font-bold text-gray-600 group-hover:text-purple-600 transition-colors">选择照片</span>
-              <span class="text-[11px] text-gray-400">点击选择图片</span>
-            </template>
-            <input type="file" accept="image/*" class="hidden" @change="pickPhoto" />
-          </label>
-
-          <!-- 表单 -->
-          <div class="flex flex-col gap-3">
-            <input
-              v-model="title"
-              type="text"
-              placeholder="照片标题（如：杜塞尔多夫聚餐）"
-              class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-400 transition-colors"
-              maxlength="60"
-            />
-            <div class="space-y-2.5">
-              <div v-for="g in groupedTypes" :key="g.name">
-                <p class="text-[10px] font-bold tracking-wider text-gray-400 mb-1.5">{{ g.name }}</p>
-                <div class="flex flex-wrap gap-2">
-                  <button
-                    v-for="t in g.items"
-                    :key="t.id"
-                    type="button"
-                    @click="type = t.id"
-                    class="px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors"
-                    :class="type === t.id
-                      ? 'bg-purple-500 border-purple-500 text-white'
-                      : 'bg-white border-gray-200 text-gray-500 hover:border-purple-300'"
-                  >{{ t.label }}</button>
-                </div>
-              </div>
-            </div>
-            <input
-              v-model="uploader"
-              type="text"
-              placeholder="你的制作人称号（选填）"
-              class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-400 transition-colors"
-              maxlength="30"
-            />
-            <button
-              type="submit"
-              class="w-full bg-purple-500 hover:bg-purple-600 text-white font-extrabold rounded-xl py-2.5 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="submitting || !photo || !title.trim() || !type"
-            >
-              {{ submitting ? '提交中…' : '提交审核' }}
-            </button>
-          </div>
-        </form>
-
-        <Transition name="fade">
-          <div v-if="submitMsg"
-            class="mt-4 px-4 py-3 rounded-xl text-sm font-bold"
-            :class="submitSuccess
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-              : 'bg-red-50 text-red-700 border border-red-200'"
-          >
-            {{ submitMsg }}
-          </div>
-        </Transition>
+        <RouterLink to="/gallery/upload"
+          class="inline-flex shrink-0 items-center gap-2 rounded-full bg-purple-500 px-5 py-2.5 text-sm font-extrabold text-white shadow-lg shadow-purple-500/15 transition-colors hover:bg-purple-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-400">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16V4m0 0L7 9m5-5l5 5M4 16v4h16v-4" />
+          </svg>
+          上传照片
+        </RouterLink>
       </div>
     </div>
 
@@ -108,7 +32,7 @@
     </div>
 
     <!-- Masonry grid -->
-    <div class="max-w-6xl mx-auto px-4 py-10">
+    <div class="max-w-6xl mx-auto px-4 py-8">
       <div v-if="loadError" role="alert" class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
         {{ loadError }}
         <button type="button" @click="loadGallery" class="ml-2 font-bold underline">重新加载</button>
@@ -119,7 +43,8 @@
       </div>
 
       <div v-else-if="!loadError && filtered.length === 0" class="text-center py-20 text-gray-400 text-sm">
-        该分类暂无照片。
+        <p>{{ activeFilter === 'all' ? '还没有照片，分享第一张留影吧。' : '该分类暂无照片。' }}</p>
+        <RouterLink v-if="activeFilter === 'all'" to="/gallery/upload" class="mt-3 inline-block font-bold text-purple-600 hover:text-purple-700">上传照片 →</RouterLink>
       </div>
 
       <div v-else class="columns-2 md:columns-3 lg:columns-4 gap-4">
@@ -129,7 +54,7 @@
           class="break-inside-avoid mb-4 bg-white rounded-2xl overflow-hidden shadow-sm group cursor-pointer hover:shadow-xl transition-all duration-300"
           @click="lightbox = item"
         >
-          <img :src="item.thumbnail" :alt="item.title"
+          <img :src="item.thumbnail || item.url" :alt="item.title" loading="lazy"
             class="w-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div class="px-3 py-2.5">
@@ -167,27 +92,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { publicRequest } from '../api/public'
 
-// 分类列表由后端 data/gallery_types.json 提供，加一场 live 不用改前端
+// 分类列表由后端 data/content/gallery_types.json 提供，加一场 live 不用改前端
 const allTypes = ref([])
 
 const gallery = ref([])
 const loading = ref(true)
 const loadError = ref('')
-const formEl = ref(null)
 const activeFilter = ref('all')
 const lightbox = ref(null)
-
-// 投稿表单里按 group 分组展示
-const groupedTypes = computed(() => {
-  const groups = []
-  for (const t of allTypes.value) {
-    const name = t.group || '其他'
-    let g = groups.find((x) => x.name === name)
-    if (!g) groups.push((g = { name, items: [] }))
-    g.items.push(t)
-  }
-  return groups
-})
 
 // 筛选栏只列出"确实有照片"的分类，免得一长串空按钮
 const filters = computed(() => {
@@ -201,63 +113,6 @@ const filters = computed(() => {
 const filtered = computed(() =>
   activeFilter.value === 'all' ? gallery.value : gallery.value.filter((i) => i.type === activeFilter.value)
 )
-
-// ── 投稿 ──────────────────────────────────────────────────────────────
-const photo = ref(null)
-const preview = ref('')
-const title = ref('')
-const type = ref('')
-const uploader = ref('')
-const submitting = ref(false)
-const submitMsg = ref('')
-const submitSuccess = ref(false)
-
-function pickPhoto(e) {
-  const file = e.target.files[0]
-  if (!file) return
-  if (file.size > 8 * 1024 * 1024) {
-    submitSuccess.value = false
-    submitMsg.value = '单张图片不能超过 8 MB。'
-    e.target.value = ''
-    return
-  }
-  photo.value = file
-  if (preview.value) URL.revokeObjectURL(preview.value)
-  preview.value = URL.createObjectURL(file)
-}
-
-function resetForm() {
-  photo.value = null
-  if (preview.value) URL.revokeObjectURL(preview.value)
-  preview.value = ''
-  title.value = ''
-  type.value = ''
-  uploader.value = ''
-  formEl.value?.reset()
-}
-
-async function handleSubmit() {
-  submitting.value = true
-  submitMsg.value = ''
-  try {
-    const fd = new FormData()
-    fd.append('photo', photo.value)
-    fd.append('title', title.value.trim())
-    fd.append('type', type.value)
-    fd.append('uploader', uploader.value.trim())
-
-    const body = await publicRequest('/api/gallery', { method: 'POST', body: fd })
-
-    submitSuccess.value = true
-    submitMsg.value = body.message
-    resetForm()
-  } catch (e) {
-    submitSuccess.value = false
-    submitMsg.value = e.message
-  } finally {
-    submitting.value = false
-  }
-}
 
 async function loadGallery() {
   loading.value = true

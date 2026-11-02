@@ -3,12 +3,13 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import json
+import sys
 from pathlib import Path
 
 load_dotenv(Path(__file__).parent / '.env')
 
 from auth import admin_required, current_admin, issue_token, verify_credentials
-from submission_store import get_store
+from submission_store import StoreError, get_store, load_supabase_sdk
 from uploads import (
     MAX_IMAGE_BYTES,
     UPLOAD_ROOT,
@@ -21,13 +22,13 @@ app = Flask(__name__)
 CORS(app)
 
 # ── 数据与上传 ────────────────────────────────────────────────────────────────
-DATA_DIR = Path(__file__).parent / 'data'
+DATA_DIR = Path(__file__).parent / 'data' / 'content'
 if os.getenv('STORAGE_BACKEND', 'local') == 'local':
     UPLOAD_ROOT.mkdir(parents=True, exist_ok=True)
 
 app.config['MAX_CONTENT_LENGTH'] = 3 * MAX_IMAGE_BYTES   # 整个请求上限
 
-# 照片墙分类来自 data/gallery_types.json，加一场 live 只要改那个文件，
+# 照片墙分类来自 data/content/gallery_types.json，加一场 live 只要改那个文件，
 # 不用动代码。每项形如 {"id": "million14th", "label": "百万现场 14th", "group": "现地"}。
 
 
@@ -79,7 +80,7 @@ def security_headers(resp):
 
 
 def load_data(filename: str) -> list:
-    """从 data/ 目录读取 JSON 文件并返回列表。"""
+    """读取由 Git 管理的活动内容与分类，不涉及用户投稿。"""
     path = DATA_DIR / filename
     with open(path, encoding='utf-8') as f:
         return json.load(f)
@@ -368,6 +369,12 @@ def frontend_page(path):
 
 
 if __name__ == '__main__':
+    if os.getenv('STORAGE_BACKEND', 'local') == 'supabase':
+        try:
+            load_supabase_sdk()
+        except StoreError as exc:
+            print(f'后端启动失败：{exc}', file=sys.stderr)
+            sys.exit(1)
     port = int(os.getenv('PORT', 5000))
     # 默认关闭：开着等于把 Werkzeug 交互式调试器暴露出去，可被远程执行代码
     debug = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'

@@ -95,7 +95,7 @@
           <p class="text-base font-extrabold text-gray-900 mb-5">欧洲偶像大师制作人群</p>
 
           <img
-            src="/groupqrcode.png"
+            src="/assets/community/group-qrcode.png"
             alt="QQ群二维码"
             class="w-52 h-52 object-contain bg-white rounded-2xl border border-gray-100 p-2 shadow-sm"
           />
