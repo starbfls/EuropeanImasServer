@@ -13,8 +13,8 @@
     "venue": "ExCeL London",
     "location": "伦敦，英国",
     "accent": "#5b8dee",
-    "featured": true,
-    "status": "upcoming",
+    "featured": false,
+    "status": "past",
     "summary": "英国规模最大的流行文化展会将于 10 月 23—25 日在 ExCeL London 举行。除动漫、游戏、Cosplay 与创作者区域外，本届确认日本演员新田真剑佑于周六、周日出席。",
     "highlight": "新田真剑佑 · 周六、周日出席",
     "cover_image": "/assets/events/mcm-london-oct-2026-hero.jpg",
@@ -22,11 +22,391 @@
     "official_logo": "/assets/events/mcm-london-fall-logo.png",
     "guests_note": "截至 2026 年 10 月 13 日，官网主嘉宾名单中可确认的日本嘉宾如下；暂未查到日本声优、歌手或漫画家。名单与出席安排仍可能变动。",
     "guests": [
-      { "name": "Mackenyu", "name_local": "新田真剑佑", "role": "演员", "note": "《航海王》真人版索隆；周六、周日出席", "image": "/assets/events/mackenyu-mcm-london-2026.png" }
+      {
+        "name": "Mackenyu",
+        "name_local": "新田真剑佑",
+        "role": "演员",
+        "note": "《航海王》真人版索隆；周六、周日出席",
+        "image": "/assets/events/mackenyu-mcm-london-2026.png"
+      }
     ],
     "content": "## 活动概要\n\n- **日期**：2026年10月23日（五）— 10月25日（日）\n- **场馆**：ExCeL London，Royal Victoria Dock\n- **地址**：1 Western Gateway, Royal Docks, London E16 1XL\n- **官网**：[mcmcomiccon.com/london](https://www.mcmcomiccon.com/london/en-us.html)\n\n## 简介\n\nMCM London 是英国规模最大的流行文化展会。2026 秋季场连续三天举行，现场包括动漫与游戏内容、Cosplay、独立创作者，以及聚焦东亚与东南亚流行文化的 **Pop Asia** 区域。\n\n## 日本嘉宾\n\n截至 **2026 年 10 月 13 日**，官网主嘉宾名单中可确认的日本嘉宾为演员 **新田真剑佑（Mackenyu）**。他因在 Netflix《航海王》真人版饰演索隆，以及出演《浪客剑心 最终章》《钢之炼金术师 完结篇 复仇者斯卡》等作品为人熟知。\n\n- **出席日**：10月24日（六）、10月25日（日）\n- **签名 / 自拍**：必须通过 FGS Autographs 提前购买，现场不售\n- **舞台活动**：10月25日（日）13:30—14:15，Main Stage「Mackenyu Spotlight」\n\n目前官网名单中暂未查到日本声优、歌手或漫画家，因此页面不额外收录英语配音演员。\n\n## 开放时间\n\n| 日期 | 优先入场 | 普通入场 | 闭馆 |\n|------|----------|----------|------|\n| 10/23（五） | 10:00 | 12:00 | 18:00（After Hours 至 21:00） |\n| 10/24（六） | 09:00 | 11:00 | 19:00 |\n| 10/25（日） | 10:00 | 12:00 | 17:00 |\n\n## 交通与提醒\n\n- 公共交通建议在 **Custom House** 站下车，Elizabeth Line 与 DLR 均可到达\n- 签名、自拍及部分热门活动需要另外预订，具体规则以官网最新公告为准\n- 嘉宾名单与出席日期可能临时变动，出发前请再次查看官网",
-    "tags": ["展会", "英国", "伦敦", "Cosplay", "日本嘉宾"],
+    "tags": [
+      "展会",
+      "英国",
+      "伦敦",
+      "Cosplay",
+      "日本嘉宾"
+    ],
     "external_link": "https://www.mcmcomiccon.com/london/en-us.html"
+  },
+  {
+    "date_posted": "2026-11-03",
+    "date_verified": "2026-11-03",
+    "featured": true,
+    "status": "upcoming",
+    "guests": [],
+    "id": 5,
+    "title": "MIKU EXPO 2026 EUROPE",
+    "title_local": "初音未来欧洲巡演 · 8 城 9 场",
+    "date_event": "2026-11-12",
+    "date_end": "2026-11-27",
+    "category": "演唱会",
+    "country": "英国等 7 国",
+    "countries": [
+      "英国",
+      "比利时",
+      "荷兰",
+      "德国",
+      "法国",
+      "西班牙",
+      "葡萄牙"
+    ],
+    "country_code": "gb",
+    "city": "伦敦等 8 城",
+    "venue": "欧洲多城 · 各站场馆见日程",
+    "location": "欧洲 · 7 国 8 城",
+    "accent": "#63d6cb",
+    "summary": "初音未来 MIKU EXPO 欧洲巡演于 11 月 12 日从伦敦出发，途经布鲁塞尔、阿姆斯特丹、柏林、杜塞尔多夫、巴黎和马德里，11 月 27 日在里斯本收官。马德里连续演出两晚。",
+    "highlight": "11.12—11.27 · 8 城 9 场",
+    "cover_image": "/assets/events/miku-expo-europe-2026.jpg",
+    "cover_credit": "2026 欧洲巡演官方主视觉 · Art by suzunosuke © CFM",
+    "cover_source": "https://mikuexpo.com/europe2026/",
+    "cover_original": "https://mikuexpo.com/europe2026/images/og.jpg",
+    "tour_stops": [
+      {
+        "date": "2026-11-12",
+        "city": "伦敦",
+        "country": "英国",
+        "venue": "The O2"
+      },
+      {
+        "date": "2026-11-14",
+        "city": "布鲁塞尔",
+        "country": "比利时",
+        "venue": "ING Arena"
+      },
+      {
+        "date": "2026-11-15",
+        "city": "阿姆斯特丹",
+        "country": "荷兰",
+        "venue": "AFAS Live"
+      },
+      {
+        "date": "2026-11-17",
+        "city": "柏林",
+        "country": "德国",
+        "venue": "Velodrom"
+      },
+      {
+        "date": "2026-11-20",
+        "city": "杜塞尔多夫",
+        "country": "德国",
+        "venue": "PSD Bank Dome"
+      },
+      {
+        "date": "2026-11-22",
+        "city": "巴黎",
+        "country": "法国",
+        "venue": "Accor Arena"
+      },
+      {
+        "date": "2026-11-24",
+        "city": "马德里",
+        "country": "西班牙",
+        "venue": "Palacio Vistalegre"
+      },
+      {
+        "date": "2026-11-25",
+        "city": "马德里",
+        "country": "西班牙",
+        "venue": "Palacio Vistalegre"
+      },
+      {
+        "date": "2026-11-27",
+        "city": "里斯本",
+        "country": "葡萄牙",
+        "venue": "Sagres Campo Pequeno"
+      }
+    ],
+    "content": "## 欧洲巡演日程\n\n| 日期 | 城市 | 场馆 |\n| --- | --- | --- |\n| 2026-11-12 | 伦敦 · 英国 | The O2 |\n| 2026-11-14 | 布鲁塞尔 · 比利时 | ING Arena |\n| 2026-11-15 | 阿姆斯特丹 · 荷兰 | AFAS Live |\n| 2026-11-17 | 柏林 · 德国 | Velodrom |\n| 2026-11-20 | 杜塞尔多夫 · 德国 | PSD Bank Dome |\n| 2026-11-22 | 巴黎 · 法国 | Accor Arena |\n| 2026-11-24 | 马德里 · 西班牙 | Palacio Vistalegre |\n| 2026-11-25 | 马德里 · 西班牙 | Palacio Vistalegre |\n| 2026-11-27 | 里斯本 · 葡萄牙 | Sagres Campo Pequeno |\n\n各站公布的开演时间均为当地时间 **20:00**。普通入场 **18:30**，VIP 入场 **17:30**；出发前请再核对所持门票与场馆通知。\n\n## 门票与现场\n\n[巡演官网](https://mikuexpo.com/europe2026/) 提供各站官方售票入口。马德里包含 11 月 24 日和 25 日两场，里斯本站为 11 月 27 日。\n\nVIP 套餐不含应援棒；应援用品和拍摄规则请查阅官网及各场馆要求。\n\n信息核对：2026 年 11 月 3 日。",
+    "tags": [
+      "初音未来",
+      "VOCALOID",
+      "欧洲巡演",
+      "Live"
+    ],
+    "external_link": "https://mikuexpo.com/europe2026/"
+  },
+  {
+    "date_posted": "2026-11-03",
+    "date_verified": "2026-11-03",
+    "featured": false,
+    "status": "upcoming",
+    "guests": [],
+    "id": 8,
+    "title": "Heroes Dutch Comic Con",
+    "title_local": "荷兰动漫展 · 2026 冬季场",
+    "date_event": "2026-11-21",
+    "date_end": "2026-11-22",
+    "category": "动漫展会",
+    "country": "荷兰",
+    "country_code": "nl",
+    "city": "乌得勒支",
+    "venue": "Jaarbeurs Utrecht",
+    "location": "乌得勒支，荷兰",
+    "accent": "#f4a259",
+    "summary": "冬季场在乌得勒支 Jaarbeurs 举行，涵盖漫画、动漫、游戏、Cosplay、创作者与影视嘉宾活动。",
+    "highlight": "11.21—11.22 · 乌得勒支",
+    "cover_image": "/assets/events/dutch-comic-con-previous-edition.jpg",
+    "cover_credit": "2025 冬季场现场照片 · Heroes Dutch Comic Con / Easyfairs（非本届海报）",
+    "cover_source": "https://www.dutchcomiccon.com/",
+    "cover_original": "https://easyfairsassets.com/sites/23/2026/03/HDCC_Winter_2025-9500.jpg",
+    "content": "## 活动概要\n\n- **日期**：2026 年 11 月 21—22 日\n- **场馆**：Jaarbeurs Utrecht，荷兰乌得勒支\n- **内容**：漫画、动漫、游戏、Cosplay、Artist Alley 与影视嘉宾活动\n\n嘉宾出席、签名与合影安排请查看[展会官网](https://www.dutchcomiccon.com/)。部分项目可能需另购票。封面使用官网往届现场照片。\n\n信息核对：2026 年 11 月 3 日。",
+    "tags": [
+      "展会",
+      "荷兰",
+      "Cosplay",
+      "游戏"
+    ],
+    "external_link": "https://www.dutchcomiccon.com/"
+  },
+  {
+    "date_posted": "2026-11-03",
+    "date_verified": "2026-11-03",
+    "featured": true,
+    "status": "upcoming",
+    "guests": [
+      {
+        "name": "Suzuko Mimori",
+        "name_local": "三森铃子（三森すずこ）",
+        "role": "声优 / 歌手",
+        "image": "/assets/events/suzuko-mimori-official.jpg",
+        "image_credit": "官方公式照 · 声优事务所 响（HiBiKi）",
+        "image_source": "https://hibiki-cast.jp/hibiki_f/mimori_suzuko/",
+        "image_original": "https://hibiki-cast.jp/wordpress/wp-content/uploads/2018/01/Suzuko-Mimori.jpg",
+        "note": "《Love Live!》园田海未、《少女☆歌剧》神乐光、《原神》珊瑚宫心海"
+      }
+    ],
+    "id": 6,
+    "title": "MimoMeets · Suzuko Mimori",
+    "title_local": "三森铃子声优座谈 · 帝国理工 ICAS Meets",
+    "date_event": "2026-11-22",
+    "date_end": "2026-11-22",
+    "category": "声优活动",
+    "country": "英国",
+    "country_code": "gb",
+    "city": "伦敦",
+    "venue": "Imperial College London · South Kensington Campus（教室待公布）",
+    "location": "伦敦，英国",
+    "accent": "#eccd7f",
+    "summary": "帝国理工 AnimeSoc 邀请三森铃子，分享声优工作与演艺经历。11 月 22 日 15:15 入场、16:00 开始，预计 18:00 结束；活动面向公众开放，具体教室待主办方公布。",
+    "highlight": "11.04 10:00 GMT · 公众首轮售票",
+    "cover_image": "/assets/events/mimomeets-london-2026.jpg",
+    "cover_credit": "MimoMeets 官方海报 · Imperial College AnimeSoc · Designed by absqrt",
+    "cover_source": "https://ic-animesoc.github.io/mimomeets/index.html",
+    "cover_original": "https://ic-animesoc.github.io/mimomeets/images/poster.jpg",
+    "content": "## 时间与地点\n\n- **日期**：2026 年 11 月 22 日（日）\n- **时间**：15:15 入场，16:00 开始，预计 18:00 结束（伦敦当地时间 GMT）\n- **地点**：Imperial College London，South Kensington Campus；具体教室待公布\n\n## 购票\n\n首轮会员售票为 **11 月 3 日 10:00** 起，公众售票为 **11 月 4 日 10:00** 起，均至 11 月 9 日 10:00。第二轮会员售票 11 月 10 日 11:00 起、公众售票 11 月 11 日 18:00 起；以上均为英国时间。\n\n公众票价：S 区 £60、A 区 £39、普通区 £29；ICAS 会员对应票种减 £10。票量与购票入口见[主办方详细说明](https://ic-animesoc.github.io/mimomeets/index.html)。\n\n## 参加须知\n\n- 公众须年满 18 岁；ICAS 会员另按主办方资格要求参加。\n- 实名票不可转让，请携带身份证明并按分配座位就座。\n- 嘉宾在场时禁止拍照、录像、录音与直播。可投递粉丝信，花篮和花束需事先获书面批准。\n\n官方来源：[Imperial College Union 活动页](https://www.imperialcollegeunion.org/whats-on/events/student-group/12521)及[ICAS 详细活动页](https://ic-animesoc.github.io/mimomeets/index.html)。信息核对：2026 年 11 月 3 日。",
+    "tags": [
+      "三森铃子",
+      "声优",
+      "伦敦",
+      "帝国理工",
+      "Love Live!"
+    ],
+    "external_link": "https://ic-animesoc.github.io/mimomeets/index.html"
+  },
+  {
+    "date_posted": "2026-11-03",
+    "date_verified": "2026-11-03",
+    "featured": false,
+    "status": "upcoming",
+    "guests": [],
+    "id": 9,
+    "title": "Japan Touch Lyon",
+    "title_local": "里昂日本与亚洲文化节",
+    "date_event": "2026-11-28",
+    "date_end": "2026-11-29",
+    "category": "日本文化节",
+    "country": "法国",
+    "country_code": "fr",
+    "city": "里昂",
+    "venue": "Eurexpo Lyon",
+    "location": "里昂，法国",
+    "accent": "#ff8ca9",
+    "summary": "Japan Touch 将动漫、Cosplay、创作者市集、美食与亚洲文化体验带到 Eurexpo Lyon，适合安排周末行程。",
+    "highlight": "11.28—11.29 · Eurexpo Lyon",
+    "cover_image": "/assets/events/japan-touch-lyon-2026.jpeg",
+    "cover_credit": "2026 官方宣传图 · Japan Touch",
+    "cover_source": "https://japan-touch.com/",
+    "cover_original": "https://japan-touch.com/_astro/JP-OpenGraph-P1-1200x630_fsgxki_dX7Uj.jpeg",
+    "content": "## 活动概要\n\n- **日期**：2026 年 11 月 28—29 日\n- **场馆**：Eurexpo Lyon，Bd de l’Europe，69680 Chassieu\n- **时间**：周六 10:00—19:00，周日 10:00—18:00（法国当地时间）\n\n活动包括日本与亚洲文化、动漫、Cosplay、市集和美食。节目与票务见[Japan Touch 官网](https://japan-touch.com/)。\n\n信息核对：2026 年 11 月 3 日。",
+    "tags": [
+      "展会",
+      "法国",
+      "里昂",
+      "日本文化"
+    ],
+    "external_link": "https://japan-touch.com/"
+  },
+  {
+    "date_posted": "2026-11-03",
+    "date_verified": "2026-11-03",
+    "featured": false,
+    "status": "upcoming",
+    "guests": [],
+    "id": 10,
+    "title": "CCON · Comic Con Stuttgart",
+    "title_local": "斯图加特动漫与流行文化展",
+    "date_event": "2026-11-28",
+    "date_end": "2026-11-29",
+    "category": "动漫展会",
+    "country": "德国",
+    "country_code": "de",
+    "city": "斯图加特",
+    "venue": "Messe Stuttgart",
+    "location": "斯图加特，德国",
+    "accent": "#f2cb52",
+    "summary": "斯图加特 CCON 十周年场，包含 Cosplay、漫画创作、游戏和 TCG 区域，以及影视嘉宾活动。",
+    "highlight": "11.28—11.29 · CCON 十周年",
+    "cover_image": "/assets/events/comic-con-stuttgart-logo.png",
+    "cover_credit": "CCON 十周年官方 Logo · Comic Con Stuttgart（非本届海报）",
+    "cover_source": "https://www.comiccon.de/",
+    "cover_original": "https://www.comiccon.de/wp-content/uploads/2023/01/CCON-Comic-Con-Stuttgart-Logo-10-Jahre.png",
+    "content": "## 活动概要\n\n- **日期**：2026 年 11 月 28—29 日\n- **场馆**：Messe Stuttgart，4、6、8、10 号馆及相关公共区域\n\n现场设有 Cosplay Kingdom、Gaming Zone、TCG Village 与漫画、影视相关活动。请在[CCON 官网](https://www.comiccon.de/)确认本届嘉宾与票务；官网同时保留往届嘉宾档案。封面使用官方十周年 Logo。\n\n信息核对：2026 年 11 月 3 日。",
+    "tags": [
+      "展会",
+      "德国",
+      "Cosplay",
+      "TCG"
+    ],
+    "external_link": "https://www.comiccon.de/"
+  },
+  {
+    "date_posted": "2026-11-03",
+    "date_verified": "2026-11-03",
+    "featured": false,
+    "status": "upcoming",
+    "guests": [],
+    "id": 11,
+    "title": "32 Manga Barcelona",
+    "title_local": "第 32 届巴塞罗那漫画与动漫展",
+    "date_event": "2026-12-05",
+    "date_end": "2026-12-08",
+    "category": "动漫展会",
+    "country": "西班牙",
+    "country_code": "es",
+    "city": "巴塞罗那",
+    "venue": "Fira Barcelona Gran Via",
+    "location": "巴塞罗那，西班牙",
+    "accent": "#e9b96d",
+    "summary": "四天的漫画、动漫与日本文化活动。本届邀请恐怖漫画家伊藤润二，他也为第 32 届绘制了官方主视觉。",
+    "highlight": "伊藤润二 · 本届官方主视觉作者",
+    "cover_image": "/assets/events/manga-barcelona-2026.jpg",
+    "cover_credit": "第 32 届官方主视觉 · 伊藤润二 / Manga Barcelona · © Junji ITO, Asahi Shimbun Publications Inc.",
+    "cover_source": "https://www.manga-barcelona.com/en/home.cfm",
+    "cover_original": "https://manga-barcelona.com/IMAGES_302/32-manga-barcelona-portada-mobile.jpg",
+    "content": "## 活动概要\n\n- **日期**：2026 年 12 月 5—8 日\n- **场馆**：Fira Barcelona Gran Via\n\n## 本届看点\n\n官方已确认伊藤润二出席，并由他绘制本届主视觉。活动围绕漫画、动漫和日本文化展开。\n\n嘉宾具体出席日、签售资格及节目安排，请查看[Manga Barcelona 官网](https://www.manga-barcelona.com/en/home.cfm)。\n\n信息核对：2026 年 11 月 3 日。",
+    "tags": [
+      "展会",
+      "西班牙",
+      "漫画",
+      "伊藤润二"
+    ],
+    "external_link": "https://www.manga-barcelona.com/en/home.cfm"
+  },
+  {
+    "date_posted": "2026-11-03",
+    "date_verified": "2026-11-03",
+    "featured": true,
+    "status": "upcoming",
+    "guests": [],
+    "id": 7,
+    "title": "Kenshi Yonezu · GHOST",
+    "title_local": "米津玄师 2026–2027 世界巡演 · 欧洲三站",
+    "date_event": "2027-02-24",
+    "date_end": "2027-02-28",
+    "category": "演唱会",
+    "country": "英国 / 法国 / 荷兰",
+    "countries": [
+      "英国",
+      "法国",
+      "荷兰"
+    ],
+    "country_code": "gb",
+    "city": "伦敦 / 巴黎 / 阿姆斯特丹",
+    "venue": "The O2 Arena / Accor Arena / Ziggo Dome",
+    "location": "伦敦、巴黎、阿姆斯特丹",
+    "accent": "#8c99ff",
+    "summary": "米津玄师 KENSHI YONEZU 2026–2027 WORLD TOUR / GHOST 欧洲段确认三场：2 月 24 日伦敦、2 月 26 日巴黎、2 月 28 日阿姆斯特丹。",
+    "highlight": "2027.02 · 伦敦、巴黎、阿姆斯特丹",
+    "cover_image": "/assets/events/kenshi-yonezu-ghost-world-2027.jpg",
+    "cover_credit": "GHOST 世界巡演官方海报 · © Kenshi Yonezu / REISSUE RECORDS inc.",
+    "cover_source": "https://reissuerecords.net/2026/10/22/kenshi-yonezu-2026-2027-world-tour-ghost/",
+    "cover_original": "https://s3-reissue.s3.ap-northeast-1.amazonaws.com/rr/wp-content/uploads/ghost_add1-scaled.jpg",
+    "tour_stops": [
+      {
+        "date": "2027-02-24",
+        "city": "伦敦",
+        "country": "英国",
+        "venue": "The O2 Arena"
+      },
+      {
+        "date": "2027-02-26",
+        "city": "巴黎",
+        "country": "法国",
+        "venue": "Accor Arena"
+      },
+      {
+        "date": "2027-02-28",
+        "city": "阿姆斯特丹",
+        "country": "荷兰",
+        "venue": "Ziggo Dome"
+      }
+    ],
+    "content": "## 欧洲场次\n\n| 日期 | 城市 | 场馆 |\n| --- | --- | --- |\n| 2027-02-24 | 伦敦 · 英国 | The O2 Arena |\n| 2027-02-26 | 巴黎 · 法国 | Accor Arena |\n| 2027-02-28 | 阿姆斯特丹 · 荷兰 | Ziggo Dome |\n\n## 官方信息与购票\n\n这是 **KENSHI YONEZU 2026–2027 WORLD TOUR / GHOST** 的欧洲段。海报为完整世界巡演海报，本页日程仅列欧洲三站。\n\n[艺人官网公告](https://reissuerecords.net/2026/10/22/kenshi-yonezu-2026-2027-world-tour-ghost/) 提供各地官方主办与售票入口；具体入场时间、票价及余票请在对应场次的官方页面查询。\n\n信息核对：2026 年 11 月 3 日。",
+    "tags": [
+      "米津玄师",
+      "GHOST",
+      "J-POP",
+      "欧洲巡演",
+      "Live"
+    ],
+    "external_link": "https://reissuerecords.net/2026/10/22/kenshi-yonezu-2026-2027-world-tour-ghost/"
+  },
+  {
+    "date_posted": "2026-11-03",
+    "date_verified": "2026-11-03",
+    "featured": false,
+    "status": "upcoming",
+    "guests": [],
+    "id": 12,
+    "title": "Manga Comic Con Leipzig",
+    "title_local": "莱比锡漫画与动漫展 · 2027",
+    "date_event": "2027-03-18",
+    "date_end": "2027-03-21",
+    "category": "动漫展会",
+    "country": "德国",
+    "country_code": "de",
+    "city": "莱比锡",
+    "venue": "Leipziger Messe",
+    "location": "莱比锡，德国",
+    "accent": "#f88d87",
+    "summary": "与莱比锡书展同期举行，涵盖漫画、动漫、游戏、绘画与 Cosplay。官网访客指南已公布 2027 年 3 月 18—21 日档期。",
+    "highlight": "2027.03.18—03.21 · 与莱比锡书展同期",
+    "cover_image": "/assets/events/manga-comic-con-previous-edition.jpg",
+    "cover_credit": "2026 年现场照片 · Manga Comic Con / Leipziger Messe（非本届海报）",
+    "cover_source": "https://www.manga-comic-con.de/de/besuchen/besucherinfo/",
+    "cover_original": "https://www.manga-comic-con.de/files/manga-comic-con/media/bilder/impressionen/mcc26-impressionen/mcc26-js-0317_16_9_s.jpg",
+    "content": "## 活动概要\n\n- **日期**：2027 年 3 月 18—21 日\n- **时间**：每日 10:00—18:00（德国当地时间）\n- **场馆**：Leipziger Messe，Messe-Allee 1，04356 Leipzig；MCC 使用 1、3 号馆\n\nMCC 与莱比锡书展同期举办，一张票可体验相关展区。按[官方访客指南](https://www.manga-comic-con.de/de/besuchen/besucherinfo/)，票务预计 2026 年 12 月开放，节目单预计 2027 年 2 月 18 日公布。封面为官网 2026 年现场照片。\n\n信息核对：2026 年 11 月 3 日。",
+    "tags": [
+      "展会",
+      "德国",
+      "莱比锡",
+      "漫画",
+      "Cosplay"
+    ],
+    "external_link": "https://www.manga-comic-con.de/de/besuchen/besucherinfo/"
   },
   {
     "id": 3,
@@ -44,15 +424,21 @@
     "accent": "#60aac4",
     "featured": false,
     "status": "upcoming",
-    "summary": "欧洲规模最大的日本文化综合展，四天会期，涵盖动漫、游戏、音乐现场、传统文化与武道，每年吸引二十余万人次。",
-    "highlight": "欧洲最大日本文化展",
+    "summary": "Japan Expo 下一届档期已公布：2027 年 7 月 8—11 日，在 Paris Nord Villepinte 举行，涵盖动漫、漫画、游戏与日本文化。",
+    "highlight": "2027.07.08—07.11 · 档期已公布",
     "cover_image": "/assets/events/japan-expo-paris-previous-edition.jpg",
     "cover_credit": "往届 Cosplay 舞台照片 · Japan Expo 官方网站",
     "cover_source": "https://paris.japan-expo.com/en",
     "guests": [],
-    "content": "## 活动概要\n\n- **日期**：2027年7月8日（四）— 7月11日（日）\n- **场馆**：Paris Nord Villepinte（VIPARIS），82 Av. des Nations\n- **官网**：[paris.japan-expo.com](https://paris.japan-expo.com/en)\n\n## 简介\n\n自 1999 年起举办，是欧洲日系活动的旗舰。除了动漫、漫画、游戏之外，还设有传统文化区（茶道、书道、和服）、武道演武台与大型音乐舞台，J-POP 与声优 Live 常在此举办欧洲首演。\n\n## 注意事项\n\n- 场馆位于巴黎北郊，RER B 线 Parc des Expositions 站下车\n- 7 月的巴黎会展中心内部相当闷热，注意补水\n- 嘉宾名单通常在展前两三个月才陆续公布",
-    "tags": ["展会", "法国", "巴黎", "Live"],
-    "external_link": "https://paris.japan-expo.com/en"
+    "content": "## 活动概要\n\n- **日期**：2027 年 7 月 8—11 日\n- **场馆**：Paris Nord Villepinte\n\n官网闭幕公告已公布下一届日期，并预告高桥阳一为荣誉嘉宾。首页部分区域仍显示 2026 届日期，参观时间与详细节目请等待 2027 届公告。\n\n[Japan Expo 官网](https://paris.japan-expo.com/en) · 信息核对：2026 年 11 月 3 日。封面为官网往届照片。",
+    "tags": [
+      "展会",
+      "法国",
+      "巴黎",
+      "Live"
+    ],
+    "external_link": "https://paris.japan-expo.com/en",
+    "date_verified": "2026-11-03"
   },
   {
     "id": 4,
@@ -70,14 +456,20 @@
     "accent": "#f472b6",
     "featured": false,
     "status": "upcoming",
-    "summary": "德国规模最大的日本与动漫博览会，2026 年到场约 23 万人次。所在城市杜塞尔多夫本身就拥有欧洲最大的日本人社区「小东京」。",
-    "highlight": "2026 年约 23 万人次",
+    "summary": "DoKomi 官网已公布下一届为 2027 年 7 月 9—11 日，地点为杜塞尔多夫。动漫、创作者市集、Cosplay 与音乐活动是展会的主要内容。",
+    "highlight": "2027.07.09—07.11 · 档期已公布",
     "cover_image": "/assets/events/dokomi-previous-edition.jpg",
     "cover_credit": "往届 Live Stage 现场照片 · DoKomi / AkibaDreams GmbH",
     "cover_source": "https://www.dokomi.de/en/event/what-is-dokomi",
     "guests": [],
-    "content": "## 活动概要\n\n- **日期**：2027年7月9日（五）— 7月11日（日）\n- **场馆**：Messe Düsseldorf + Congress Center Süd\n- **官网**：[dokomi.de](https://www.dokomi.de/en/)\n\n## 简介\n\nDoKomi 已成长为德国最大的日系展会，2026 年报到人次约 23 万。2027 年档期比往年（5—6月）明显后移到 7 月，与 Japan Expo 巴黎场仅相差一天，两边都想去的话需要提前规划。\n\n杜塞尔多夫的 Immermannstraße 一带是欧洲最大的日本人街区，展会期间顺路吃拉面、逛日系书店是保留节目。\n\n## 注意事项\n\n- **预售通常在前一年 11 月 1 日开启**，热门票种很快售罄，建议设提醒\n- 展馆与老城区之间可搭 U-Bahn 直达",
-    "tags": ["展会", "德国", "杜塞尔多夫", "小东京"],
-    "external_link": "https://www.dokomi.de/en/"
+    "content": "## 活动概要\n\n- **日期**：2027 年 7 月 9—11 日\n- **场馆**：Messe Düsseldorf\n\n官网已公布 2027 届日期，但仍保留 2026 届节目与嘉宾资料。本页暂不把往届名单列为 2027 届阵容。票务、嘉宾和舞台安排请等待[DoKomi 官网](https://www.dokomi.de/en/)更新。\n\n本届与巴黎 Japan Expo 部分日期重叠，跨城行程请提前规划。封面使用往届 Live Stage 照片。\n\n信息核对：2026 年 11 月 3 日。",
+    "tags": [
+      "展会",
+      "德国",
+      "杜塞尔多夫",
+      "小东京"
+    ],
+    "external_link": "https://www.dokomi.de/en/",
+    "date_verified": "2026-11-03"
   }
 ]

@@ -54,6 +54,8 @@
             class="w-full max-h-[62vh] object-contain" />
           <figcaption v-if="item.cover_credit" class="px-4 py-3 border-t border-white/10 text-[11px] text-white/45">
             {{ item.cover_credit }}
+            <a v-if="item.cover_source" :href="item.cover_source" target="_blank" rel="noopener"
+              class="ml-2 underline decoration-white/25 hover:text-white">图片来源 ↗</a>
           </figcaption>
         </figure>
 
@@ -183,7 +185,7 @@ onMounted(async () => {
     const body = await r.json()
     item.value = body.success ? body.data : null
   } catch {
-    // 后端未启动时退回本地快照（无正文）
+    // 后端未启动时退回同源生成的完整本地快照。
     item.value = fallbackEvents.find(e => e.id === id) ?? null
   } finally {
     loading.value = false

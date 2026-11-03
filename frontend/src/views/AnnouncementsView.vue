@@ -18,7 +18,7 @@
         <div class="flex items-center gap-3 mb-8">
           <span class="h-px w-10 bg-yellow-400/60" />
           <p class="font-mono-num text-[11px] tracking-[0.35em] uppercase text-yellow-400/80">
-            Event Index · 2026 / 2027
+            Event Index · {{ eventYears }}
           </p>
         </div>
 
@@ -28,7 +28,7 @@
         </h1>
 
         <p class="mt-8 max-w-xl text-sm leading-relaxed text-white/45">
-          欧洲的超大型动漫、游戏与日本文化展会。日期、场馆与嘉宾信息均引自各展会官网，
+          欧洲近期的动漫展会、日本文化节、演唱会与声优活动。日期、场馆与演出信息均引自官网，
           最终以主办方公告为准。
         </p>
 
@@ -44,7 +44,7 @@
       <div class="marquee-host relative z-10 border-t border-white/10 py-3 overflow-hidden">
         <div class="marquee-track">
           <div v-for="pass in 2" :key="pass" class="flex shrink-0 items-center">
-            <span v-for="e in items" :key="`${pass}-${e.id}`" class="flex items-center">
+            <span v-for="e in sorted" :key="`${pass}-${e.id}`" class="flex items-center">
               <span class="font-display text-sm font-bold tracking-wide text-white/55 px-5">{{ e.title }}</span>
               <span class="font-mono-num text-[11px] text-white/25">{{ shortRange(e) }}</span>
               <span class="mx-5 text-white/15">◆</span>
@@ -60,7 +60,7 @@
     </div>
 
     <template v-else>
-      <!-- ═══ 详解活动（有嘉宾名单的）══════════════════════════════════════ -->
+      <!-- ═══ 重点活动 ═══════════════════════════════════════════════════ -->
       <section v-for="(ev, idx) in detailed" :key="ev.id" class="relative z-10 border-b border-white/10">
         <div class="max-w-6xl mx-auto px-4 py-16 md:py-24">
 
@@ -70,7 +70,7 @@
               {{ idx === 0 ? '▸ Next Up' : '▸ Also On' }}
             </span>
             <span class="font-mono-num text-xs text-white/50">
-              {{ daysTo(ev) > 0 ? `距开展还有 ${daysTo(ev)} 天` : daysTo(ev) === 0 ? '今日开展' : '进行中 / 已开展' }}
+              {{ daysTo(ev) > 0 ? `距活动还有 ${daysTo(ev)} 天` : daysTo(ev) === 0 ? '今日开始' : '进行中' }}
             </span>
           </div>
 
@@ -117,6 +117,17 @@
 
               <p class="mt-6 text-sm leading-relaxed text-white/55">{{ ev.summary }}</p>
 
+              <div v-if="ev.tour_stops?.length" class="mt-6 rounded-xl border border-white/10 overflow-hidden">
+                <p class="px-4 py-3 text-[10px] tracking-[0.2em] uppercase text-white/40 border-b border-white/10">Tour Dates · 欧洲场次</p>
+                <ul class="divide-y divide-white/10">
+                  <li v-for="stop in ev.tour_stops" :key="`${stop.date}-${stop.city}`"
+                    class="grid grid-cols-[3.5rem,1fr] gap-3 px-4 py-2.5 text-xs">
+                    <time :datetime="stop.date" class="font-mono-num" :style="{ color: ev.accent }">{{ md(stop.date) }}</time>
+                    <span class="text-white/65">{{ stop.city }}<span class="block sm:inline sm:ml-2 text-white/35">{{ stop.venue }}</span></span>
+                  </li>
+                </ul>
+              </div>
+
               <div class="mt-8 flex flex-wrap gap-3">
                 <RouterLink :to="`/announcements/${ev.id}`"
                   class="font-display inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-[#07091a] transition-transform hover:-translate-y-0.5"
@@ -137,10 +148,13 @@
                   :style="{ background: `radial-gradient(circle at 50% 30%, ${ev.accent}, transparent 70%)` }" />
                 <div class="relative rounded-2xl overflow-hidden border border-white/12 bg-[#0b0e22]">
                   <img :src="ev.cover_image" :alt="`${ev.title} 官方主视觉`"
-                    class="w-full object-cover" loading="lazy" @error="onImgError" />
+                    class="w-full max-h-[42rem] object-contain" loading="lazy" @error="onImgError" />
                   <figcaption class="px-4 py-3 border-t border-white/10">
                     <p class="font-mono-num text-[10px] tracking-[0.2em] uppercase text-white/35">Key Visual</p>
-                    <p class="text-[11px] text-white/50 mt-1">{{ ev.cover_credit || '官方主视觉' }}</p>
+                    <p class="text-[11px] text-white/50 mt-1">{{ ev.cover_credit || '官方主视觉' }}
+                      <a v-if="ev.cover_source" :href="ev.cover_source" target="_blank" rel="noopener"
+                        class="ml-2 underline decoration-white/25 hover:text-white">图片来源 ↗</a>
+                    </p>
                   </figcaption>
                 </div>
               </figure>
@@ -204,7 +218,7 @@
             <p class="mt-6 font-mono-num text-[11px] text-white/30">
               嘉宾名单引自
               <a :href="ev.external_link" target="_blank" rel="noopener"
-                class="underline decoration-white/20 hover:text-white/60">官网</a>，展前仍可能追加或变动。
+                class="underline decoration-white/20 hover:text-white/60">官网</a>，活动前仍可能追加或变动。
             </p>
           </div>
         </div>
@@ -214,7 +228,7 @@
       <section v-if="rest.length" id="event-index" class="relative z-10 scroll-mt-20">
         <div class="max-w-6xl mx-auto px-4 py-14">
           <div class="flex items-center gap-4 mb-6">
-            <h3 class="font-display text-2xl font-bold">更多大型展会</h3>
+            <h3 class="font-display text-2xl font-bold">更多展会与活动</h3>
             <span class="flex-1 h-px bg-white/10" />
             <span class="font-mono-num text-xs text-white/30">{{ rest.length }}</span>
           </div>
@@ -222,22 +236,24 @@
           <ul class="border-t border-white/10">
             <li v-for="e in rest" :key="e.id" v-reveal class="reveal">
               <RouterLink :to="`/announcements/${e.id}`"
-                class="group relative grid grid-cols-[auto,1fr,auto] sm:grid-cols-[auto,1.6fr,1fr,auto] items-center gap-4 sm:gap-6 py-6 border-b border-white/10 hover:bg-white/[0.03] transition-colors">
+                class="group relative grid grid-cols-[auto,1fr] sm:grid-cols-[auto,1.6fr,1fr,auto] items-center gap-4 sm:gap-6 py-6 border-b border-white/10 hover:bg-white/[0.03] transition-colors">
                 <span class="absolute left-0 top-0 bottom-0 w-[2px] scale-y-0 group-hover:scale-y-100 origin-top transition-transform duration-300"
                   :style="{ backgroundColor: e.accent }" />
 
-                <span class="font-mono-num text-xs text-white/25 w-7 pl-2 sm:pl-3">
-                  {{ String(e.id).padStart(2, '0') }}
+                <span class="w-12 sm:w-20 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-white/5">
+                  <img :src="e.cover_image" :alt="`${e.title} 活动图片`" loading="lazy"
+                    class="w-full aspect-[4/3] object-contain" @error="onImgError" />
                 </span>
 
                 <div class="min-w-0">
-                  <div class="flex items-center gap-2.5">
-                    <img :src="flagSrc(e.country_code)" alt="" class="h-3 w-4 object-cover rounded-[2px] shrink-0" />
-                    <h4 class="font-display text-lg sm:text-2xl font-bold truncate group-hover:translate-x-1 transition-transform">
+                  <div class="flex items-start sm:items-center gap-2.5">
+                    <img :src="flagSrc(e.country_code)" alt="" class="h-3 w-4 mt-1 sm:mt-0 object-cover rounded-[2px] shrink-0" />
+                    <h4 class="font-display min-w-0 text-base sm:text-2xl font-bold sm:truncate group-hover:translate-x-1 transition-transform">
                       {{ e.title }}
                     </h4>
                   </div>
                   <p class="text-xs text-white/40 mt-1.5 truncate">{{ e.venue }} · {{ e.city }}</p>
+                  <p class="sm:hidden font-mono-num text-[11px] mt-2 text-white/60">{{ yearOf(e) }} · {{ shortRange(e) }}</p>
                   <p v-if="e.highlight" class="sm:hidden text-[11px] mt-1.5" :style="{ color: e.accent }">
                     ★ {{ e.highlight }}
                   </p>
@@ -245,19 +261,19 @@
 
                 <div class="hidden sm:block min-w-0">
                   <p class="font-mono-num text-base font-bold" :style="{ color: e.accent }">{{ shortRange(e) }}</p>
+                  <p class="font-mono-num text-[10px] text-white/30 mt-1">{{ yearOf(e) }}</p>
                   <p v-if="e.highlight" class="text-[11px] text-white/35 mt-1 truncate">★ {{ e.highlight }}</p>
                 </div>
 
-                <span class="font-mono-num text-xs text-white/25 group-hover:text-white transition-colors pr-1">
-                  <span class="sm:hidden">{{ shortRange(e) }}</span>
-                  <span class="hidden sm:inline" aria-hidden="true">→</span>
+                <span class="hidden sm:inline font-mono-num text-xs text-white/25 group-hover:text-white transition-colors pr-1" aria-hidden="true">
+                  →
                 </span>
               </RouterLink>
             </li>
           </ul>
 
           <p class="mt-14 font-mono-num text-[11px] leading-relaxed text-white/25">
-            数据更新于 2026-10-13 · 日期、场馆与嘉宾信息引自各展会官网，主办方调整后以官网为准<br />
+            数据核对于 {{ lastVerified }} · 日期、场馆与演出信息引自官网，主办方调整后以官网为准<br />
             所有活动名称、Logo 与图片版权归各主办方所有
           </p>
         </div>
@@ -303,9 +319,14 @@ const sorted = computed(() =>
     .sort((a, b) => a.date_event.localeCompare(b.date_event))
 )
 
-/** 有嘉宾名单的活动做成完整详解版块 */
-const detailed = computed(() => sorted.value.filter(e => e.guests?.length))
-const rest = computed(() => sorted.value.filter(e => !e.guests?.length))
+/** 推荐巡演、声优活动及有嘉宾名单的展会沿用大图详解版式。 */
+const isDetailed = (e) => e.featured || e.guests?.length
+const detailed = computed(() => sorted.value.filter(isDetailed))
+const rest = computed(() => sorted.value.filter(e => !isDetailed(e)))
+const eventYears = computed(() => [...new Set(sorted.value.map(e => yearOf(e)))].join(' / '))
+const lastVerified = computed(() => sorted.value
+  .map(e => e.date_verified || e.date_posted)
+  .filter(Boolean).sort().at(-1) || '—')
 
 /** 嘉宾按 group 字段分组；没有分组字段就返回单组 */
 const guestSections = (ev) => {
@@ -321,9 +342,9 @@ const guestSections = (ev) => {
 }
 
 const stats = computed(() => [
-  { value: items.value.length, label: 'Events' },
-  { value: new Set(items.value.map(e => e.country)).size, label: 'Countries' },
-  { value: items.value.reduce((n, e) => n + (e.guests?.length ?? 0), 0), label: 'Guests' },
+  { value: sorted.value.length, label: 'Events' },
+  { value: new Set(sorted.value.flatMap(e => e.countries || [e.country])).size, label: 'Countries' },
+  { value: sorted.value.filter(e => ['演唱会', '声优活动'].includes(e.category)).length, label: 'Live & Talks' },
 ])
 
 /* ── 格式化 ────────────────────────────────────────────────────────── */

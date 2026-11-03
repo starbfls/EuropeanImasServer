@@ -220,7 +220,7 @@
         </div>
 
         <div v-if="loadingImas" class="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div v-for="i in 3" :key="i" class="rounded-2xl bg-white/5 animate-pulse h-40" />
+          <div v-for="i in 3" :key="i" class="rounded-2xl bg-white/5 animate-pulse h-80" />
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -228,23 +228,36 @@
             v-for="item in imasEvents"
             :key="item.id"
             to="/imas-calendar"
-            class="group relative block rounded-2xl overflow-hidden border border-white/10 bg-[#07091a] hover:border-white/25 transition-colors p-5"
+            class="group relative block rounded-2xl overflow-hidden border border-white/10 bg-[#07091a] hover:border-white/25 hover:-translate-y-0.5 transition-all duration-300"
           >
-            <span class="absolute left-0 top-0 bottom-0 w-[3px]" :style="{ backgroundColor: item.accent }" />
-            <div class="flex items-center gap-2 mb-3">
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border"
-                :style="{ color: item.accent, borderColor: item.accent + '55', background: item.accent + '14' }">
-                {{ item.brand_local }}
-              </span>
-              <span class="font-mono-num text-[10px] text-white/30 uppercase tracking-wider">{{ item.type }}</span>
+            <div class="h-40 overflow-hidden bg-[#07091a] relative border-b border-white/10"
+              :title="item.cover_credit || '官方主视觉'">
+              <img v-if="item.cover_image && !failedImasImages.has(item.id)" :src="item.cover_image"
+                :alt="`${item.title_local || item.title} 官方主视觉`" loading="lazy"
+                class="w-full h-full object-contain opacity-90 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-500"
+                @error="failedImasImages.add(item.id)" />
+              <div v-else class="w-full h-full flex items-center justify-center p-5"
+                :style="{ background: `radial-gradient(120% 120% at 15% 0%, ${item.accent}33 0%, transparent 60%), #07091a` }">
+                <span class="font-display text-2xl font-bold text-white/35">{{ item.brand_local }}</span>
+              </div>
             </div>
-            <p class="font-mono-num text-xl font-bold" :style="{ color: item.accent }">
-              {{ imasRange(item) }}
-            </p>
-            <p class="font-display text-sm font-bold text-white leading-snug mt-2.5 line-clamp-2">
-              {{ item.title_local || item.title }}
-            </p>
-            <p class="text-xs text-white/40 mt-2 truncate">{{ item.venue_local || item.venue }}，{{ item.city }}</p>
+            <div class="relative p-5">
+              <span class="absolute left-0 top-0 bottom-0 w-[3px]" :style="{ backgroundColor: item.accent }" />
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border"
+                  :style="{ color: item.accent, borderColor: item.accent + '55', background: item.accent + '14' }">
+                  {{ item.brand_local }}
+                </span>
+                <span class="font-mono-num text-[10px] text-white/30 uppercase tracking-wider">{{ item.type }}</span>
+              </div>
+              <p class="font-mono-num text-xl font-bold" :style="{ color: item.accent }">
+                {{ imasRange(item) }}
+              </p>
+              <p class="font-display text-sm font-bold text-white leading-snug mt-2.5 line-clamp-2">
+                {{ item.title_local || item.title }}
+              </p>
+              <p class="text-xs text-white/40 mt-2 truncate">{{ item.venue_local || item.venue }}，{{ item.city }}</p>
+            </div>
           </RouterLink>
         </div>
       </div>
@@ -269,6 +282,7 @@ const announcements = ref([])
 const imasEvents = ref([])
 const loadingAnn = ref(true)
 const loadingImas = ref(true)
+const failedImasImages = ref(new Set())
 
 // 四人在 hero 里的站位；人物本身的数据在 data/idols.js
 const heroLayout = {
