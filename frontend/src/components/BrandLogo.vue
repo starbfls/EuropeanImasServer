@@ -126,6 +126,13 @@ defineProps({
   -webkit-text-fill-color: transparent;
 }
 
+/* 首页大 Logo：拉近英文大写字母与中文字面的视觉高度。 */
+.brand-logo--lg .word-pro { font-size: 1.1em; }
+
+@media (max-width: 640px) {
+  .brand-logo--lg { font-size: clamp(1.1rem, 5.8vw, 4.25rem); }
+}
+
 /* ── 欧洲活動部 ─────────────────────────────────────────────────────────── */
 .word-cn {
   font-family: 'Noto Sans SC', 'Noto Sans JP', 'Nunito', system-ui, sans-serif;
