@@ -43,6 +43,15 @@ REENCODE = {
     '.gif':  ('GIF',  '.gif',  {'save_all': True, 'optimize': True}),
 }
 
+# These are the formats we write, independent of OS MIME databases or registries.
+IMAGE_CONTENT_TYPES = {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.webp': 'image/webp',
+    '.gif': 'image/gif',
+}
+
 # 限流字典最多保留多少个 IP，防止被伪造来源撑爆内存
 MAX_TRACKED_IPS = 20_000
 
@@ -206,8 +215,7 @@ def prepare_image(storage, kind: str, prefix: str, thumbnail: bool = False) -> d
         except Exception:
             pass
 
-    content_types = {'JPEG': 'image/jpeg', 'PNG': 'image/png', 'WEBP': 'image/webp', 'GIF': 'image/gif'}
-    asset = {'path': f'{kind}/{name}', 'data': data, 'content_type': content_types[fmt]}
+    asset = {'path': f'{kind}/{name}', 'data': data, 'content_type': IMAGE_CONTENT_TYPES[out_ext]}
     if not thumbnail:
         return {'image': asset, 'thumbnail': asset}
 
@@ -218,7 +226,7 @@ def prepare_image(storage, kind: str, prefix: str, thumbnail: bool = False) -> d
             t.thumbnail((THUMB_MAX_EDGE, THUMB_MAX_EDGE), Image.LANCZOS)
             thumb_buf = io.BytesIO()
             t.save(thumb_buf, 'WEBP', quality=82, method=5)
-        thumb_asset = {'path': f'{kind}/{thumb_name}', 'data': thumb_buf.getvalue(), 'content_type': 'image/webp'}
+        thumb_asset = {'path': f'{kind}/{thumb_name}', 'data': thumb_buf.getvalue(), 'content_type': IMAGE_CONTENT_TYPES['.webp']}
     except Exception:
         thumb_asset = asset      # 缩略图失败不影响主流程，退回用原图
 

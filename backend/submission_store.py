@@ -1,14 +1,13 @@
 """照片/名片记录与文件存储。云端只持久保存对象路径，不保存临时签名 URL。"""
 import json
 import logging
-import mimetypes
 import os
 import threading
 from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 
-from uploads import UPLOAD_ROOT, UploadError, delete_upload, prepare_image, save_image
+from uploads import IMAGE_CONTENT_TYPES, UPLOAD_ROOT, UploadError, delete_upload, prepare_image, save_image
 
 log = logging.getLogger(__name__)
 KINDS = {'gallery': ('url', 'thumbnail'), 'business_cards': ('front', 'back')}
@@ -236,10 +235,13 @@ class SupabaseStore:
             uploaded = []
             try:
                 for path in paths:
+                    content_type = IMAGE_CONTENT_TYPES.get(Path(path).suffix.lower())
+                    if not content_type:
+                        raise StoreError('投稿包含不支持的图片格式，请联系管理员检查存储记录')
                     data = self._bucket().download(path)
                     uploaded.append(path)
                     self._bucket(True).upload(path, data, file_options={
-                        'content-type': mimetypes.guess_type(path)[0] or 'application/octet-stream',
+                        'content-type': content_type,
                         'cache-control': '60', 'upsert': 'true',
                     })
                 rows = self._table().update({'approved': True}).eq('id', item_id).eq('kind', kind).eq('deleting', False).execute().data

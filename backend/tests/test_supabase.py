@@ -2,11 +2,14 @@
 import copy
 import io
 import json
+import mimetypes
 import os
 import tempfile
 import types
 import unittest
 from pathlib import Path
+from email.parser import BytesParser
+from email.policy import default as email_policy
 from unittest.mock import patch
 
 import httpx
@@ -99,6 +102,15 @@ class CloudHTTP:
                     self.objects[bucket].pop(name, None)
                 return httpx.Response(200, json=[])
             if method in ('POST', 'PUT'):
+                # Match Storage bucket MIME restrictions, including multipart files.
+                message = BytesParser(policy=email_policy).parsebytes(
+                    f'Content-Type: {req.headers["content-type"]}\r\n\r\n'.encode() + req.content
+                )
+                for part in message.iter_parts():
+                    if part.get_param('name', header='content-disposition') == 'file':
+                        if part.get_content_type() not in {'image/jpeg', 'image/png', 'image/webp', 'image/gif'}:
+                            return httpx.Response(415, json={'statusCode': '415', 'error': 'InvalidMimeType',
+                                                           'message': 'mime type is not supported'})
                 self.objects[bucket][key] = req.content
                 return httpx.Response(200, json={'Key': bucket + '/' + key, 'Id': '00000000-0000-0000-0000-000000000001'})
             return httpx.Response(200, content=self.objects[bucket][key])
@@ -142,6 +154,16 @@ class SupabaseFlowTests(unittest.TestCase):
         uploads = len(self.cloud.calls)
         self.store.approve('gallery', item_id)
         self.assertEqual(len(self.cloud.calls), uploads + 1)  # 已通过时只读记录
+
+    def test_approval_webp_without_system_mime_database(self):
+        item_id = self.create_photo()
+        minimal_mime_types = mimetypes.MimeTypes()
+        minimal_mime_types.types_map[True].pop('.webp', None)
+        with patch('mimetypes.guess_type', side_effect=minimal_mime_types.guess_type):
+            row = self.store.approve('gallery', item_id)
+        self.assertTrue(row['approved'])
+        self.assertEqual(len(self.cloud.objects['imas-public']), 2)
+        self.assertFalse(self.cloud.objects['imas-pending'])
 
     def test_both_card_faces_validated_before_cloud_writes(self):
         with self.assertRaises(UploadError):
