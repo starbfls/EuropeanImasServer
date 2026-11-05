@@ -5,7 +5,7 @@
       <div class="max-w-5xl mx-auto">
         <p class="text-emerald-400/70 text-xs tracking-[0.3em] uppercase mb-2">Business Card Wall</p>
         <h1 class="text-3xl font-extrabold text-white">名片墙</h1>
-        <p class="text-white/40 text-sm mt-2">制作人名刺展示 — 悬停可翻面查看</p>
+        <p class="text-white/40 text-sm mt-2">制作人名刺展示 — 点击查看正反面，电脑端也可悬停翻面</p>
       </div>
     </div>
 
@@ -93,31 +93,37 @@
 
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="card in cards" :key="card.id" class="group">
-          <!-- 翻转卡：比例按正反面里更"竖"的那张算，两面都用 contain，不裁图 -->
-          <div
-            class="card-flip-wrapper cursor-pointer"
+          <!-- 容器随当前面的比例变化，正反面都用 contain，不裁图。 -->
+          <button
+            type="button"
+            class="card-flip-wrapper block w-full text-left cursor-pointer"
             :style="{ aspectRatio: aspectOf(card.id, showBack(card.id) ? 'back' : 'front') }"
-            @mouseenter="hovered = card.id"
-            @mouseleave="hovered = null"
+            :aria-label="`${card.owner}的名片，点击查看${showBack(card.id) ? '正面' : '背面'}`"
+            :aria-pressed="showBack(card.id)"
+            @pointerenter="onPointerEnter($event, card.id)"
+            @pointerleave="clearHover(card.id)"
+            @pointercancel="clearHover(card.id)"
             @click="toggleFlip(card.id)"
           >
-            <div class="card-flip-inner" :class="{ 'is-flipped': showBack(card.id) }">
+            <span class="card-flip-inner block" :class="{ 'is-flipped': showBack(card.id) }">
               <!-- Front -->
-              <div class="card-face card-front rounded-2xl overflow-hidden shadow-md bg-gray-100">
+              <span class="card-face card-front rounded-2xl overflow-hidden shadow-md bg-gray-100" :aria-hidden="showBack(card.id)">
                 <img :src="card.front" :alt="`${card.owner} 名片正面`"
+                  draggable="false"
                   class="w-full h-full object-contain"
                   :ref="(el) => measure(el, card.id, 'front')"
                   @load="(e) => measure(e.target, card.id, 'front')" />
-              </div>
+              </span>
               <!-- Back -->
-              <div class="card-face card-back rounded-2xl overflow-hidden shadow-md bg-gray-100">
+              <span class="card-face card-back rounded-2xl overflow-hidden shadow-md bg-gray-100" :aria-hidden="!showBack(card.id)">
                 <img :src="card.back" :alt="`${card.owner} 名片背面`"
+                  draggable="false"
                   class="w-full h-full object-contain"
                   :ref="(el) => measure(el, card.id, 'back')"
                   @load="(e) => measure(e.target, card.id, 'back')" />
-              </div>
-            </div>
-          </div>
+              </span>
+            </span>
+          </button>
           <div class="mt-2.5 flex items-center justify-between px-1">
             <p class="text-xs font-bold text-gray-700">{{ card.owner }}</p>
             <span class="text-[11px] text-gray-400">推：{{ card.oshi }}</span>
@@ -205,15 +211,25 @@ function aspectOf(id, side) {
   return d[side] ?? d.front ?? d.back ?? DEFAULT_ASPECT
 }
 
-// 翻面：桌面端悬停，触屏点击。两者都走同一个状态，
-// 尺寸直接写成内联 style，避免 CSS 变量 + :hover 之间的层叠问题。
+// 触屏会合成兼容鼠标事件；只让真实鼠标的 pointerenter 触发悬停。
+// 点击按当前可见面切换，避免悬停状态把卡片一直锁在背面。
 const flipped = reactive(new Set())
 const hovered = ref(null)
 
 const showBack = (id) => hovered.value === id || flipped.has(id)
 
+function onPointerEnter(event, id) {
+  if (event.pointerType === 'mouse') hovered.value = id
+}
+
+function clearHover(id) {
+  if (hovered.value === id) hovered.value = null
+}
+
 function toggleFlip(id) {
-  flipped.has(id) ? flipped.delete(id) : flipped.add(id)
+  const nextBack = !showBack(id)
+  clearHover(id)
+  nextBack ? flipped.add(id) : flipped.delete(id)
 }
 
 async function loadCards() {
@@ -235,14 +251,17 @@ onMounted(loadCards)
 <style scoped>
 .card-flip-wrapper {
   perspective: 900px;
+  touch-action: manipulation;
   transition: aspect-ratio 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.card-flip-wrapper:focus-visible { outline: 3px solid #10b981; outline-offset: 5px; border-radius: 1rem; }
 
 .card-flip-inner {
   position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
+  pointer-events: none;
   transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .card-flip-inner.is-flipped { transform: rotateY(180deg); }
@@ -254,6 +273,10 @@ onMounted(loadCards)
   -webkit-backface-visibility: hidden;
 }
 .card-back { transform: rotateY(180deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .card-flip-wrapper, .card-flip-inner { transition: none; }
+}
 
 .slide-enter-active, .slide-leave-active { transition: all 0.2s ease; }
 .slide-enter-from, .slide-leave-to { opacity: 0; transform: translateY(-4px); }
