@@ -6,7 +6,7 @@
         <div class="hero-copy">
           <p class="eyebrow"><span></span> 468 PRODUCTION · COMMUNITY HANDBOOK</p>
           <h1>欢迎来到<br /><span>468 事务所。</span></h1>
-          <p class="hero-description">欧洲偶像大师同好会 · 新人入群手册</p>
+          <p class="hero-description">欧洲偶像大师同好会 · 入群手册</p>
           <div class="hero-actions">
             <a href="#guidelines" class="button button-gold">阅读社群规章 <span aria-hidden="true">↓</span></a>
             <a href="#join" class="hero-join">加入 QQ 制作人群 <span aria-hidden="true">↗</span></a>
@@ -41,7 +41,7 @@
           <p class="eyebrow section-label">00 / ABOUT US</p>
           <h2 id="community-title">欧洲时区，同一份热爱。</h2>
           <p class="body-copy">这里是偶像大师欧洲同好会——468 事务所。身处欧洲多国、东亚、南美和北美，拥有海外留学经历的制作人在这里相聚。</p>
-          <p class="body-copy">我们主要聊偶像大师系列，对所有企划及声优相关内容开放。无论你喜欢哪一个企划、担当哪一位偶像，都欢迎加入讨论。</p>
+          <p class="body-copy">这里主要聊偶像大师系列，对所有企划及声优相关内容开放。无论你喜欢哪一个企划、担当哪一位偶像，都欢迎加入讨论。</p>
           <ul class="brand-list" aria-label="欢迎所有偶像大师企划的制作人">
             <li v-for="brand in brands" :key="brand.name" :style="{ '--brand-color': brand.color }">
               <span class="brand-code">{{ brand.code }}</span><span>{{ brand.name }}</span>
@@ -108,7 +108,7 @@
       @click="onDialogClick" @close="onDialogClose" @keydown.tab="keepDialogFocus">
       <div class="qr-dialog-content">
         <div class="qr-dialog-heading">
-          <div><p class="eyebrow section-label">QQ PRODUCER COMMUNITY</p><h2 id="qr-title">扫码加入 468 事务所</h2></div>
+          <div><p class="eyebrow section-label">QQ PRODUCER COMMUNITY</p><h2 id="qr-title">加入 468 事务所</h2></div>
           <button type="button" class="dialog-close" aria-label="关闭二维码大图" @click="qrDialog.close()">×</button>
         </div>
         <div class="qr-crop qr-large"><img :src="qrImage" alt="QQ群二维码大图" width="1284" height="2283" /></div>
