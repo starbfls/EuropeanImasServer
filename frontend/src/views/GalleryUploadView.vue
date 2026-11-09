@@ -51,7 +51,8 @@
               class="mt-2 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm transition-colors focus:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-100" />
 
             <fieldset class="mt-5 min-w-0">
-              <legend class="text-xs font-bold text-gray-600">照片标签 <span class="font-normal text-gray-400">选择一项</span></legend>
+              <legend class="text-xs font-bold text-gray-600">照片标签 <span class="font-normal text-gray-400">至少选择一项，可多选</span></legend>
+              <p class="mt-2 text-[11px] leading-relaxed text-gray-400">再次点击可取消，支持跨分组选择，例如「学园现地 + mochi」。<span v-if="selectedTypes.length" class="ml-1 font-bold text-purple-600">已选 {{ selectedTypes.length }} 项</span></p>
               <p v-if="loadingTypes" role="status" class="mt-3 text-xs text-gray-400">正在加载标签…</p>
               <div v-else-if="typesError" role="alert" class="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 text-xs leading-relaxed text-red-700">
                 {{ typesError }}
@@ -61,9 +62,9 @@
                 <div v-for="group in groupedTypes" :key="group.name">
                   <p class="mb-1.5 text-[11px] font-bold text-gray-400">{{ group.name }}</p>
                   <div class="flex flex-wrap gap-2">
-                    <button v-for="tag in group.items" :key="tag.id" type="button" :aria-pressed="type === tag.id" @click="type = tag.id"
+                    <button v-for="tag in group.items" :key="tag.id" type="button" :aria-pressed="selectedTypes.includes(tag.id)" @click="selectedTypes = toggleTag(selectedTypes, tag.id)"
                       class="rounded-full border px-3 py-1.5 text-xs font-bold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400"
-                      :class="type === tag.id ? 'border-purple-500 bg-purple-500 text-white' : 'border-gray-200 bg-white text-gray-500 hover:border-purple-300'">
+                      :class="selectedTypes.includes(tag.id) ? 'border-purple-500 bg-purple-500 text-white' : 'border-gray-200 bg-white text-gray-500 hover:border-purple-300'">
                       {{ tag.label }}
                     </button>
                   </div>
@@ -91,6 +92,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { publicRequest } from '../api/public'
+import { toggleTag } from '../utils/galleryTags'
 
 const allTypes = ref([])
 const loadingTypes = ref(true)
@@ -99,7 +101,7 @@ const fileInput = ref(null)
 const photo = ref(null)
 const preview = ref('')
 const title = ref('')
-const type = ref('')
+const selectedTypes = ref([])
 const uploader = ref('')
 const submitting = ref(false)
 const submitSuccess = ref(false)
@@ -116,7 +118,8 @@ const groupedTypes = computed(() => {
 })
 
 const canSubmit = computed(() => Boolean(photo.value && title.value.trim()
-  && !loadingTypes.value && allTypes.value.some(tag => tag.id === type.value)))
+  && !loadingTypes.value && selectedTypes.value.length
+  && selectedTypes.value.every(id => allTypes.value.some(tag => tag.id === id))))
 
 function releasePreview() {
   if (preview.value) URL.revokeObjectURL(preview.value)
@@ -149,7 +152,7 @@ async function loadTypes() {
   try {
     allTypes.value = (await publicRequest('/api/gallery/types')).data
     if (!allTypes.value.length) throw new Error('暂时没有可用标签，请稍后重试。')
-    if (!allTypes.value.some(tag => tag.id === type.value)) type.value = ''
+    selectedTypes.value = selectedTypes.value.filter(id => allTypes.value.some(tag => tag.id === id))
   } catch (error) {
     allTypes.value = []
     typesError.value = error.message
@@ -166,14 +169,14 @@ async function handleSubmit() {
     const form = new FormData()
     form.append('photo', photo.value)
     form.append('title', title.value.trim())
-    form.append('type', type.value)
+    for (const id of selectedTypes.value) form.append('types', id)
     form.append('uploader', uploader.value.trim())
     const body = await publicRequest('/api/gallery', { method: 'POST', body: form })
     submitMsg.value = body.message || '正在等待审核，审核通过后将展示在照片墙。'
     submitSuccess.value = true
     clearPhoto()
     title.value = ''
-    type.value = ''
+    selectedTypes.value = []
     uploader.value = ''
   } catch (error) {
     submitMsg.value = error.message

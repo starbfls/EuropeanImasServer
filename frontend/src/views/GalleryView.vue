@@ -21,14 +21,20 @@
     <!-- Filter -->
     <div class="bg-white border-b border-gray-100 px-4 py-3">
       <div class="max-w-6xl mx-auto flex flex-wrap gap-2">
+        <button type="button" @click="activeFilters = []" :aria-pressed="activeFilters.length === 0"
+          class="px-3 py-1 rounded-full text-xs font-bold transition-colors"
+          :class="activeFilters.length === 0 ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'">全部</button>
         <button
           v-for="f in filters"
           :key="f.value"
-          @click="activeFilter = f.value"
+          type="button"
+          :aria-pressed="activeFilters.includes(f.value)"
+          @click="activeFilters = toggleTag(activeFilters, f.value)"
           class="px-3 py-1 rounded-full text-xs font-bold transition-colors"
-          :class="activeFilter === f.value ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'"
+          :class="activeFilters.includes(f.value) ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'"
         >{{ f.label }}</button>
       </div>
+      <p class="max-w-6xl mx-auto mt-2 text-[11px] leading-relaxed text-gray-400">可多选，再次点击取消；显示同时包含所选标签的照片。</p>
     </div>
 
     <!-- Masonry grid -->
@@ -43,8 +49,8 @@
       </div>
 
       <div v-else-if="!loadError && filtered.length === 0" class="text-center py-20 text-gray-400 text-sm">
-        <p>{{ activeFilter === 'all' ? '还没有照片，分享第一张留影吧。' : '该分类暂无照片。' }}</p>
-        <RouterLink v-if="activeFilter === 'all'" to="/gallery/upload" class="mt-3 inline-block font-bold text-purple-600 hover:text-purple-700">上传照片 →</RouterLink>
+        <p>{{ activeFilters.length === 0 ? '还没有照片，分享第一张留影吧。' : '暂无同时包含这些标签的照片，可以取消部分标签。' }}</p>
+        <RouterLink v-if="activeFilters.length === 0" to="/gallery/upload" class="mt-3 inline-block font-bold text-purple-600 hover:text-purple-700">上传照片 →</RouterLink>
       </div>
 
       <div v-else class="columns-2 md:columns-3 lg:columns-4 gap-4">
@@ -59,7 +65,10 @@
           />
           <div class="px-3 py-2.5">
             <p class="text-xs font-bold text-gray-800 truncate">{{ item.title }}</p>
-            <span class="text-[11px] text-gray-400">{{ item.type_label || item.type }}<template v-if="item.uploader"> · {{ item.uploader }}</template></span>
+            <div class="mt-1.5 flex flex-wrap gap-1">
+              <span v-for="(label, index) in photoTagLabels(item)" :key="index" class="rounded bg-purple-50 px-1.5 py-0.5 text-[10px] leading-relaxed text-purple-600">{{ label }}</span>
+            </div>
+            <p v-if="item.uploader" class="mt-1.5 text-[11px] text-gray-400">{{ item.uploader }}</p>
           </div>
         </div>
       </div>
@@ -71,15 +80,18 @@
         class="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4"
         @click.self="lightbox = null"
       >
-        <div class="bg-white rounded-2xl overflow-hidden max-w-3xl w-full shadow-2xl">
+        <div class="bg-white rounded-2xl overflow-hidden overflow-y-auto max-h-[95dvh] max-w-3xl w-full shadow-2xl">
           <img :src="lightbox.url" :alt="lightbox.title" class="w-full max-h-[72vh] object-contain" />
           <div class="p-4 flex items-center justify-between">
-            <div>
+            <div class="min-w-0 pr-3">
               <p class="font-extrabold text-gray-900 text-sm">{{ lightbox.title }}</p>
-              <span class="text-xs text-gray-400">{{ lightbox.type_label || lightbox.type }}<template v-if="lightbox.uploader"> · {{ lightbox.uploader }}</template></span>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <span v-for="(label, index) in photoTagLabels(lightbox)" :key="index" class="rounded bg-purple-50 px-2 py-0.5 text-[11px] text-purple-600">{{ label }}</span>
+              </div>
+              <p v-if="lightbox.uploader" class="mt-2 text-xs text-gray-400">{{ lightbox.uploader }}</p>
             </div>
             <button @click="lightbox = null"
-              class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-800 hover:bg-gray-100 transition-colors text-lg"
+              aria-label="关闭照片大图" class="w-8 h-8 shrink-0 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-800 hover:bg-gray-100 transition-colors text-lg"
             >✕</button>
           </div>
         </div>
@@ -91,6 +103,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { publicRequest } from '../api/public'
+import { matchesPhotoTags, photoTagIds, photoTagLabels, toggleTag } from '../utils/galleryTags'
 
 // 分类列表由后端 data/content/gallery_types.json 提供，加一场 live 不用改前端
 const allTypes = ref([])
@@ -98,20 +111,17 @@ const allTypes = ref([])
 const gallery = ref([])
 const loading = ref(true)
 const loadError = ref('')
-const activeFilter = ref('all')
+const activeFilters = ref([])
 const lightbox = ref(null)
 
 // 筛选栏只列出"确实有照片"的分类，免得一长串空按钮
 const filters = computed(() => {
-  const used = new Set(gallery.value.map((i) => i.type))
-  return [
-    { label: '全部', value: 'all' },
-    ...allTypes.value.filter((t) => used.has(t.id)).map((t) => ({ label: t.label, value: t.id })),
-  ]
+  const used = new Set(gallery.value.flatMap(photoTagIds))
+  return allTypes.value.filter((t) => used.has(t.id)).map((t) => ({ label: t.label, value: t.id }))
 })
 
 const filtered = computed(() =>
-  activeFilter.value === 'all' ? gallery.value : gallery.value.filter((i) => i.type === activeFilter.value)
+  gallery.value.filter(item => matchesPhotoTags(item, activeFilters.value))
 )
 
 async function loadGallery() {
@@ -124,6 +134,7 @@ async function loadGallery() {
     ])
     gallery.value = photos.data
     allTypes.value = types.data
+    activeFilters.value = activeFilters.value.filter(id => filters.value.some(filter => filter.value === id))
   } catch (e) {
     loadError.value = e.message
     gallery.value = []

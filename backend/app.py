@@ -112,11 +112,17 @@ def get_imas_events():
 
 
 def _with_label(photo: dict) -> dict:
-    """用分类表里的最新名字覆盖快照，分类改名后老照片也跟着更新。"""
-    t = gallery_type_map().get(photo.get('type'))
-    if t:
-        return {**photo, 'type_label': t.get('label', photo.get('type'))}
-    return {**photo, 'type_label': photo.get('type_label') or photo.get('type')}
+    """统一新多标签与旧单标签记录，标签名称始终取分类表的最新值。"""
+    raw_types = photo.get('types')
+    if not isinstance(raw_types, list) or not raw_types:
+        raw_types = [photo.get('type')]
+    tag_ids = list(dict.fromkeys(tag.strip() for tag in raw_types if isinstance(tag, str) and tag.strip()))
+    type_map = gallery_type_map()
+    labels = [type_map.get(tag, {}).get('label') or
+              (photo.get('type_label') if len(tag_ids) == 1 else None) or tag
+              for tag in tag_ids]
+    return {**photo, 'type': tag_ids[0] if tag_ids else '', 'types': tag_ids,
+            'type_labels': labels, 'type_label': ' · '.join(labels)}
 
 
 @app.route('/api/gallery', methods=['GET'])
@@ -138,15 +144,17 @@ def get_gallery_types():
 def submit_gallery_photo():
     """访客上传照片；云端模式下先保存到私有桶，审核前不公开。"""
     title = (request.form.get('title') or '').strip()
-    photo_type = (request.form.get('type') or '').strip()
+    # Repeated multipart fields carry the selected tags; accept the old single field too.
+    raw_types = request.form.getlist('types') if 'types' in request.form else [request.form.get('type', '')]
+    photo_types = list(dict.fromkeys(tag.strip() for tag in raw_types))
     uploader = (request.form.get('uploader') or '').strip()
     photo = request.files.get('photo')
 
     if not title:
         return jsonify({"success": False, "error": "请填写照片标题"}), 400
     types = gallery_type_map()
-    if photo_type not in types:
-        return jsonify({"success": False, "error": "请选择一个有效的分类"}), 400
+    if not photo_types or any(tag not in types for tag in photo_types):
+        return jsonify({"success": False, "error": "请选择至少一个有效的照片标签；如标签已更新，请刷新后重新选择。"}), 400
     if not photo:
         return jsonify({"success": False, "error": "请选择要上传的照片"}), 400
 
@@ -158,8 +166,8 @@ def submit_gallery_photo():
 
     try:
         get_store().create('gallery', {
-            'title': title[:60], 'type': photo_type,
-            'type_label': types[photo_type].get('label', photo_type),
+            'title': title[:60], 'type': photo_types[0], 'types': photo_types,
+            'type_label': ' · '.join(types[tag].get('label', tag) for tag in photo_types),
             'uploader': uploader[:30] or '匿名制作人',
         }, {'url': photo})
     except UploadError as exc:

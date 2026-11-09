@@ -15,7 +15,7 @@ from unittest.mock import patch
 import httpx
 from PIL import Image
 from supabase import ClientOptions, create_client
-from werkzeug.datastructures import FileStorage
+from werkzeug.datastructures import FileStorage, MultiDict
 
 from submission_store import LocalStore, StoreError, SupabaseStore, get_store, load_supabase_sdk
 from uploads import UploadError, prepare_image
@@ -311,9 +311,73 @@ class FlaskAndLocalTests(unittest.TestCase):
             self.assertIn('token=', item['url'])
             self.assertEqual(self.client.post(f'/api/admin/gallery/{item["id"]}/approve', headers=headers).status_code, 200)
             public = self.client.get('/api/gallery').json['data'][0]
+            self.assertEqual(public['types'], ['mcm_london'])
+            self.assertEqual(public['type'], 'mcm_london')
             self.assertNotIn('token=', public['url'])
             self.assertEqual(self.client.delete(f'/api/admin/gallery/{item["id"]}', headers=headers).status_code, 200)
             self.assertEqual(self.client.get('/api/gallery').json['data'], [])
+
+    def test_multi_tag_upload_survives_review_and_public_listing(self):
+        from auth import issue_token
+        cloud = CloudHTTP()
+        self.addCleanup(cloud.client.close)
+        store = SupabaseStore(cloud.sdk)
+        headers = {'Authorization': 'Bearer ' + issue_token('admin')}
+        tags = ['gkmas_shirube_final', 'mochi']
+        with patch.object(self.module, 'get_store', return_value=store):
+            response = self.client.post('/api/gallery', data=MultiDict([
+                ('title', '学园现地的 mochi'), ('types', tags[0]), ('types', tags[1]),
+                ('types', tags[1]), ('photo', (picture(), 'photo.png')),
+            ]))
+            self.assertEqual(response.status_code, 201)
+            self.assertEqual(cloud.rows[0]['payload']['types'], tags)
+            self.assertEqual(cloud.rows[0]['payload']['type'], tags[0])
+            pending = self.client.get('/api/admin/gallery?status=pending', headers=headers).json['data'][0]
+            self.assertEqual(pending['types'], tags)
+            self.assertEqual(pending['type_labels'], ['学园偶像大师「標」Final', 'mochi'])
+            self.assertEqual(self.client.post(f'/api/admin/gallery/{pending["id"]}/approve', headers=headers).status_code, 200)
+            public = self.client.get('/api/gallery').json['data'][0]
+            self.assertEqual(public['types'], tags)
+            self.assertEqual(public['type_labels'], pending['type_labels'])
+            self.assertIn('mochi', public['type_label'])
+
+    def test_empty_or_unknown_tags_are_rejected_before_storage(self):
+        for fields in [[], [('types', '')], [('types', 'mochi'), ('types', 'not-a-tag')],
+                       [('type', 'doll'), ('types', '')]]:
+            with self.subTest(fields=fields), patch.object(self.module, 'get_store') as factory:
+                response = self.client.post('/api/gallery', data=MultiDict([
+                    ('title', '标签验证'), ('photo', (picture(), 'photo.png')), *fields,
+                ]))
+                self.assertEqual(response.status_code, 400)
+                self.assertIn('有效的照片标签', response.json['error'])
+                factory.assert_not_called()
+
+    def test_old_photo_records_get_latest_labels_without_migration(self):
+        with patch.object(self.module, 'gallery_type_map', return_value={
+            'doll': {'label': '娃娃新名称'}, 'mochi': {'label': 'mochi 新名称'},
+        }):
+            old = self.module._with_label({'id': 1, 'type': 'doll', 'type_label': '旧名称'})
+            self.assertEqual(old['types'], ['doll'])
+            self.assertEqual(old['type_labels'], ['娃娃新名称'])
+            multi = self.module._with_label({'types': ['mochi', 'doll', 'mochi']})
+            self.assertEqual(multi['types'], ['mochi', 'doll'])
+            self.assertEqual(multi['type_labels'], ['mochi 新名称', '娃娃新名称'])
+            unknown = self.module._with_label({'type': 'retired', 'type_label': '历史标签'})
+            self.assertEqual(unknown['type_labels'], ['历史标签'])
+
+    def test_local_store_retains_multi_tags_when_approved(self):
+        import uploads
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'gallery.json').write_text('[]', encoding='utf-8')
+            with patch.object(uploads, 'UPLOAD_ROOT', root / 'uploads'):
+                store = LocalStore(root)
+                tags = ['travel', 'mochi', 'nunu']
+                row = store.create('gallery', {'title': '旅行留影', 'type': tags[0], 'types': tags}, {'url': upload()})
+                store.approve('gallery', row['id'])
+                restored = LocalStore(root).list('gallery')[0]
+                self.assertEqual(restored['types'], tags)
+                self.assertEqual(self.module._with_label(restored)['type_labels'], ['旅行 / 出游', 'mochi', '努努'])
 
     def test_metadata_is_stripped_and_images_are_resized(self):
         source = io.BytesIO()
