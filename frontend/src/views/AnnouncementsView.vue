@@ -192,6 +192,7 @@
                   <div class="overflow-hidden bg-[#10142c]"
                     :class="g.image ? 'aspect-[4/5]' : 'aspect-[3/2]'">
                     <img v-if="g.image" :src="g.image" :alt="g.name" loading="lazy" @error="onImgError"
+                      :style="{ objectFit: g.image_fit || 'cover' }"
                       class="w-full h-full object-cover grayscale-[65%] group-hover:grayscale-0 group-hover:scale-[1.04] transition-all duration-500" />
                     <!-- 无官方照片时用字体排版块 -->
                     <div v-else class="w-full h-full flex items-center justify-center"
@@ -210,6 +211,9 @@
                       </span>
                     </div>
                     <p v-if="g.note" class="text-[10px] text-white/30 mt-1.5 leading-relaxed">{{ g.note }}</p>
+                    <a v-if="g.image_source" :href="g.image_source" target="_blank" rel="noopener"
+                      :title="g.image_credit || '官方照片来源'"
+                      class="inline-block mt-2 text-[10px] text-white/40 underline decoration-white/20 hover:text-white/70">官方照片来源 ↗</a>
                   </div>
                 </li>
               </ul>

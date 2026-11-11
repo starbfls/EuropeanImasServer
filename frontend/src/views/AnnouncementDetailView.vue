@@ -96,6 +96,7 @@
                 <div class="overflow-hidden bg-[#10142c]"
                     :class="g.image ? 'aspect-[4/5]' : 'aspect-[3/2]'">
                   <img v-if="g.image" :src="g.image" :alt="g.name" loading="lazy" @error="hideImg"
+                    :style="{ objectFit: g.image_fit || 'cover' }"
                     class="w-full h-full object-cover grayscale-[65%] group-hover:grayscale-0 transition-all duration-500" />
                   <div v-else class="w-full h-full flex items-center justify-center"
                     :style="{ background: `radial-gradient(120% 120% at 30% 10%, ${accent}2e 0%, transparent 62%), #10142c` }">
@@ -106,6 +107,9 @@
                   <p class="font-display text-sm font-bold truncate">{{ g.name }}</p>
                   <p v-if="g.name_local" class="text-[11px] text-white/45 mt-0.5 truncate">{{ g.name_local }}</p>
                   <p class="text-[10px] text-white/35 mt-1.5">{{ g.role }}<span v-if="g.note"> · {{ g.note }}</span></p>
+                  <a v-if="g.image_source" :href="g.image_source" target="_blank" rel="noopener"
+                    :title="g.image_credit || '官方照片来源'"
+                    class="inline-block mt-2 text-[10px] text-white/40 underline decoration-white/20 hover:text-white/70">官方照片来源 ↗</a>
                 </div>
               </li>
             </ul>
